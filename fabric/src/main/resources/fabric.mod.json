@@ -1,31 +1,30 @@
 {
   "schemaVersion": 1,
-  "id": "examplemod",
+  "id": "vs_takeoff",
   "version": "${version}",
-  "name": "Example Mod",
+  "name": "VS Takeoff",
   "description": "This is an example description! Tell everyone what your mod is about!",
   "authors": [
-    "Me!"
+    "Me, Myself, and I."
   ],
   "contact": {
     "homepage": "https://fabricmc.net/",
     "sources": "https://github.com/FabricMC/fabric-example-mod"
   },
   "license": "Insert License Here",
-  "icon": "assets/examplemod/icon.png",
+  "icon": "assets/vs_takeoff/icon.png",
   "environment": "*",
   "entrypoints": {
     "main": [
-      "net.examplemod.fabric.ExampleModFabric"
+      "net.takeoff.fabric.vs_takeoff"
     ]
   },
   "mixins": [
-    "examplemod.mixins.json",
-    "examplemod-common.mixins.json"
+    "vs_takeoff.mixins.json",
+    "vs_takeoff-common.mixins.json"
   ],
   "depends": {
     "fabric": "*",
     "minecraft": ">=1.18.2",
-    "architectury": ">=4.9.83"
   }
 }

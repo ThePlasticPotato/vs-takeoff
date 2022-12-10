@@ -4,32 +4,32 @@ loaderVersion = "[40,)"
 license = "Insert License Here"
 
 [[mods]]
-modId = "examplemod"
+modId = "vs_takeoff"
 version = "${version}"
-displayName = "Example Mod"
-authors = "Me!"
+displayName = "VS Takeoff"
+authors = "Me, Myself, and I."
 description = '''
-This is an example description! Tell everyone what your mod is about!
+A propulsion addon for the VS2 Physics Engine. Based off Eureka.
 '''
 #logoFile = ""
 
-[[dependencies.examplemod]]
+[[dependencies.vs_takeoff]]
 modId = "forge"
 mandatory = true
 versionRange = "[40,)"
 ordering = "NONE"
 side = "BOTH"
 
-[[dependencies.examplemod]]
+[[dependencies.vs_takeoff]]
 modId = "minecraft"
 mandatory = true
 versionRange = "[1.18.2,)"
 ordering = "NONE"
 side = "BOTH"
 
-[[dependencies.examplemod]]
-modId = "architectury"
+[[dependencies.vs_takeoff]]
+modId = "create"
 mandatory = true
-versionRange = "[4.9.83,)"
-ordering = "AFTER"
+versionRange = "[0.5.0e,)"
+ordering = "NONE"
 side = "BOTH"
