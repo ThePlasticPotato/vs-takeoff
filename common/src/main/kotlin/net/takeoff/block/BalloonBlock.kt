@@ -1,8 +1,10 @@
 package net.takeoff.block
 
 
+import com.mojang.math.Vector3d
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
+import net.minecraft.core.Position
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.damagesource.DamageSource
 import net.minecraft.world.entity.Entity
@@ -21,7 +23,28 @@ class BalloonBlock(properties: Properties) : Block(properties) {
     override fun fallOn(level: Level, state: BlockState, blockPos: BlockPos, entity: Entity, f: Float) {
         entity.causeFallDamage(f, 0.2f, DamageSource.FALL)
     }
+    override fun onPlace(state: BlockState, level: Level, pos: BlockPos, oldState: BlockState, isMoving: Boolean) {
+        super.onPlace(state, level, pos, oldState, isMoving)
 
+        if (level.isClientSide) return
+        level as ServerLevel
+
+        val ship = level.getShipObjectManagingPos(pos) ?: level.getShipManagingPos(pos) ?: return
+        TakeoffShipControl.getOrCreate(ship).balloons += 1
+        TakeoffShipControl.getOrCreate(ship).balloonpos += pos
+    }
+
+    override fun onRemove(state: BlockState, level: Level, pos: BlockPos, newState: BlockState, isMoving: Boolean) {
+        super.onRemove(state, level, pos, newState, isMoving)
+
+        if (level.isClientSide) return
+        level as ServerLevel
+
+        level.getShipManagingPos(pos)?.getAttachment<TakeoffShipControl>()?.let {
+            it.balloons -= 1
+            it.balloonpos -= pos
+        }
+    }
     override fun onProjectileHit(level: Level, state: BlockState, hit: BlockHitResult, projectile: Projectile) {
         if (level.isClientSide) return
 

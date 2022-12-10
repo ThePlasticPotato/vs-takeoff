@@ -21,6 +21,5 @@ object TakeoffWeights : BlockStateInfoProvider {
     }
 
     fun register() {
-        Registry.register(BlockStateInfo.REGISTRY, ResourceLocation(TakeoffMod.MOD_ID, "ballast"), this)
     }
 }

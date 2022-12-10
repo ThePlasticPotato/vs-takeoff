@@ -2,29 +2,45 @@
   "schemaVersion": 1,
   "id": "vs_takeoff",
   "version": "${version}",
-  "name": "VS Takeoff",
-  "description": "This is an example description! Tell everyone what your mod is about!",
+  "name": "VS Takeoff Mod",
+  "description": "Basically Archimedes Ships, but with VS2 as the backend!",
   "authors": [
-    "Me, Myself, and I."
+    "ewoudje",
+    "Tri0de",
+    "Rubydesic"
+  ],
+  "contributors": [
+    "Copper",
+    "Anarava",
+    "VS Discord"
   ],
   "contact": {
-    "homepage": "https://fabricmc.net/",
-    "sources": "https://github.com/FabricMC/fabric-example-mod"
+    "homepage": "https://valkyrienskies.org/",
+    "sources": "https://github.com/ValkyrienSkies/Takeoff"
   },
-  "license": "Insert License Here",
+  "license": "Apache-2.0",
   "icon": "assets/vs_takeoff/icon.png",
   "environment": "*",
   "entrypoints": {
     "main": [
-      "net.takeoff.fabric.vs_takeoff"
+      "net.takeoff.fabric.TakeoffModFabric"
+    ],
+    "client": [
+      "net.takeoff.fabric.TakeoffModFabric${'$'}Client"
+    ],
+    "preLaunch": [
+      "net.takeoff.fabric.ValkyrienPreLaunch"
+    ],
+    "modmenu": [
+      "net.takeoff.fabric.TakeoffModFabric${'$'}ModMenu"
     ]
   },
   "mixins": [
-    "vs_takeoff.mixins.json",
-    "vs_takeoff-common.mixins.json"
+    "vs_takeoff-common.mixins.json",
+    "vs_takeoff.mixins.json"
   ],
   "depends": {
-    "fabric": "*",
     "minecraft": ">=1.18.2",
+    "valkyrienskies": ">=${vs2_version}"
   }
 }

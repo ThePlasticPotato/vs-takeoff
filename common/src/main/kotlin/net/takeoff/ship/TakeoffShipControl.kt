@@ -2,7 +2,9 @@ package net.takeoff.ship
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect
 import com.fasterxml.jackson.annotation.JsonIgnore
+import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
+import net.minecraft.world.level.block.Block
 import org.joml.AxisAngle4d
 import org.joml.Math.clamp
 import org.joml.Quaterniond
@@ -18,6 +20,7 @@ import org.valkyrienskies.core.impl.api.shipValue
 import org.valkyrienskies.core.impl.game.ships.PhysShipImpl
 import org.valkyrienskies.core.impl.pipelines.SegmentUtils
 import net.takeoff.TakeoffConfig
+import org.joml.Vector3dc
 import org.valkyrienskies.mod.common.util.toJOMLD
 import kotlin.math.*
 
@@ -77,6 +80,30 @@ class TakeoffShipControl : ShipForcesInducer, ServerShipUser, Ticked {
         // [ ] Rotation based of shipsize
         // [x] Engine consumption
         // [ ] Fix elevation sensititvity
+
+        // region Balloons
+        var idealUpwardVel = Vector3d(0.0, 0.0, 0.0)
+        //        val elevationSnappiness = 10.0
+        val idealUpwardForce = Vector3d(
+            0.0,
+            idealUpwardVel.y() - vel.y() - (GRAVITY / 10.0),
+            0.0
+        ).mul(mass * 10.0)
+
+        val balloonForceProvided = forcePerBalloon
+
+        val actualUpwardForce = Vector3d(0.0, min(balloonForceProvided, max(idealUpwardForce.y(), 0.0)), 0.0)
+
+        while (balloons > 0) {
+            for (i in balloonpos.indices) {
+                val loc = (balloonpos.get(i).toJOMLD())
+                forcesApplier.applyInvariantForceToPos(actualUpwardForce, loc)
+            }
+        }
+
+        // end region
+
+
 
         // region Aligning
 
@@ -186,16 +213,7 @@ class TakeoffShipControl : ShipForcesInducer, ServerShipUser, Ticked {
 
         // region Elevation
         // Higher numbers make the ship accelerate to max speed faster
-//        val elevationSnappiness = 10.0
-//        val idealUpwardForce = Vector3d(
-//            0.0,
-//            idealUpwardVel.y() - vel.y() - (GRAVITY / elevationSnappiness),
-//            0.0
-//        ).mul(mass * elevationSnappiness)
 
-//        val balloonForceProvided = balloons * forcePerBalloon
-//
-//        val actualUpwardForce = Vector3d(0.0, min(balloonForceProvided, max(idealUpwardForce.y(), 0.0)), 0.0)
 //        forcesApplier.applyInvariantForce(actualUpwardForce)
         // endregion
 
@@ -208,6 +226,8 @@ class TakeoffShipControl : ShipForcesInducer, ServerShipUser, Ticked {
         set(v) {
             field = v; deleteIfEmpty()
         }
+
+    var balloonpos = mutableListOf<BlockPos>()
 
     override fun tick() {
         extraForce = power

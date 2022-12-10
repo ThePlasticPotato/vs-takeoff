@@ -1,12 +1,13 @@
 {
   "required": true,
-  "package": "net.takeoff.mixin.fabric",
+  "package": "net.takeoff.fabric.mixin",
   "compatibilityLevel": "JAVA_17",
-  "client": [
-  ],
   "mixins": [
+  ],
+  "client": [
   ],
   "injectors": {
     "defaultRequire": 1
-  }
+  },
+  "minVersion": "0.8"
 }
