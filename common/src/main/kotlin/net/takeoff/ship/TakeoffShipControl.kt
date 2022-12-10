@@ -186,40 +186,25 @@ class TakeoffShipControl : ShipForcesInducer, ServerShipUser, Ticked {
 
         // region Elevation
         // Higher numbers make the ship accelerate to max speed faster
-        val elevationSnappiness = 10.0
-        val idealUpwardForce = Vector3d(
-            0.0,
-            idealUpwardVel.y() - vel.y() - (GRAVITY / elevationSnappiness),
-            0.0
-        ).mul(mass * elevationSnappiness)
+//        val elevationSnappiness = 10.0
+//        val idealUpwardForce = Vector3d(
+//            0.0,
+//            idealUpwardVel.y() - vel.y() - (GRAVITY / elevationSnappiness),
+//            0.0
+//        ).mul(mass * elevationSnappiness)
 
-        val balloonForceProvided = balloons * forcePerBalloon
-
-        val actualUpwardForce = Vector3d(0.0, min(balloonForceProvided, max(idealUpwardForce.y(), 0.0)), 0.0)
-        forcesApplier.applyInvariantForce(actualUpwardForce)
+//        val balloonForceProvided = balloons * forcePerBalloon
+//
+//        val actualUpwardForce = Vector3d(0.0, min(balloonForceProvided, max(idealUpwardForce.y(), 0.0)), 0.0)
+//        forcesApplier.applyInvariantForce(actualUpwardForce)
         // endregion
 
         // Drag
         // forcesApplier.applyInvariantForce(Vector3d(vel.y()).mul(-mass))
     }
     var power = 0.0
-    var anchors = 0 // Amount of anchors
-        set(v) {
-            field = v; deleteIfEmpty()
-        }
 
-    var anchorsActive = 0 // Anchors that are active
     var balloons = 0 // Amount of balloons
-        set(v) {
-            field = v; deleteIfEmpty()
-        }
-
-    var helms = 0 // Amount of helms
-        set(v) {
-            field = v; deleteIfEmpty()
-        }
-
-    var floaters = 0 // Amount of floaters * 15
         set(v) {
             field = v; deleteIfEmpty()
         }
@@ -232,7 +217,7 @@ class TakeoffShipControl : ShipForcesInducer, ServerShipUser, Ticked {
     }
 
     private fun deleteIfEmpty() {
-        if (helms == 0 && floaters == 0 && anchors == 0 && balloons == 0) {
+        if (balloons == 0) {
             ship?.saveAttachment<TakeoffShipControl>(null)
         }
     }
@@ -243,12 +228,8 @@ class TakeoffShipControl : ShipForcesInducer, ServerShipUser, Ticked {
                 ?: TakeoffShipControl().also { ship.saveAttachment(it) }
         }
 
-        private const val ALIGN_THRESHOLD = 0.01
-        private const val DISASSEMBLE_THRESHOLD = 0.02
         private val forcePerBalloon get() = 5000 * -GRAVITY
 
         private const val GRAVITY = -10.0
     }
-}
-
 }

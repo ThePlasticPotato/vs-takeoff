@@ -3,11 +3,10 @@
   "package": "net.takeoff.mixin",
   "compatibilityLevel": "JAVA_17",
   "client": [
-    "MixinTitleScreen"
-  ],
-  "mixins": [
+    "client.PlayerEntityModelMixin"
   ],
   "injectors": {
     "defaultRequire": 1
-  }
+  },
+  "minVersion": "0.8"
 }
