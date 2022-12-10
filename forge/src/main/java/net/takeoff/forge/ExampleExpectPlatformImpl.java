@@ -1,6 +1,6 @@
-package net.examplemod.forge;
+package net.takeoff.forge;
 
-import net.examplemod.ExampleExpectPlatform;
+import net.takeoff.ExampleExpectPlatform;
 import net.minecraftforge.fml.loading.FMLPaths;
 
 import java.nio.file.Path;

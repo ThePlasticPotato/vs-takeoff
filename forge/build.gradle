@@ -1,5 +1,19 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        // Make sure this version matches the one included in Kotlin for Forge
+        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10'
+        // OPTIONAL Gradle plugin for Kotlin Serialization
+        classpath 'org.jetbrains.kotlin:kotlin-serialization:1.6.10'
+    }
+}
+
 plugins {
     id "com.github.johnrengelman.shadow" version "7.1.2"
+    id "com.matthewprenger.cursegradle"
+    id "com.modrinth.minotaur"
 }
 
 architectury {
@@ -12,10 +26,22 @@ loom {
 
     forge {
         convertAccessWideners = true
+        mixinConfig "vs_takeoff.mixins.json"
+        mixinConfig "vs_takeoff-common.mixins.json"
         extraAccessWideners.add loom.accessWidenerPath.get().asFile.name
+    }
+}
 
-        mixinConfig "examplemod-common.mixins.json"
-        mixinConfig "examplemod.mixins.json"
+repositories {
+    maven {
+        name = 'Kotlin for Forge'
+        url = 'https://thedarkcolour.github.io/KotlinForForge/'
+    }
+    repositories {
+        maven {
+            name = 'tterrag maven'
+            url = 'https://maven.tterrag.com/'
+        }
     }
 }
 
@@ -29,8 +55,11 @@ configurations {
 
 dependencies {
     forge "net.minecraftforge:forge:${rootProject.forge_version}"
-    // Remove the next line if you don't want to depend on the API
-    modApi "dev.architectury:architectury-forge:${rootProject.architectury_version}"
+    modApi("org.valkyrienskies:valkyrienskies-118-forge:${rootProject.vs2_version}") { transitive = false }
+    implementation("org.valkyrienskies.core:api:1.1.0+c92814e9b7") { transitive = false }
+    implementation("com.simibubi.create:create-${create_minecraft_version}:${create_version}:slim") { transitive = false }
+    implementation("com.jozufozu.flywheel:flywheel-forge-${flywheel_minecraft_version}:${flywheel_version}")
+    implementation("com.tterrag.registrate:Registrate:${registrate_version}")
 
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive = false }
@@ -40,8 +69,13 @@ processResources {
     inputs.property "version", project.version
 
     filesMatching("META-INF/mods.toml") {
-        expand "version": project.version
+        expand "version": project.version, "vs2_version": project.vs2_version.substring(0, project.vs2_version.indexOf('+'))
     }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    // Minecraft 1.18 (1.18-pre2) upwards uses Java 17.
+    it.options.release = 17
 }
 
 shadowJar {

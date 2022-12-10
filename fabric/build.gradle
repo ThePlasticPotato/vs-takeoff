@@ -1,6 +1,10 @@
 plugins {
     id "com.github.johnrengelman.shadow" version "7.1.2"
+    id "com.matthewprenger.cursegradle"
+    id "com.modrinth.minotaur"
 }
+
+//apply from: '../gradle-scripts/publish-curseforge.gradle'
 
 architectury {
     platformSetupLoomIde()
@@ -22,8 +26,14 @@ configurations {
 dependencies {
     modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
     modApi "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
+    modImplementation("net.fabricmc:fabric-language-kotlin:1.8.5+kotlin.1.7.20")
+
+    // Mod menu
+    modImplementation("com.terraformersmc:modmenu:3.2.3")
+    modImplementation("me.shedaniel.cloth:cloth-config:${cloth_config_version}")
+
     // Remove the next line if you don't want to depend on the API
-    modApi "dev.architectury:architectury-fabric:${rootProject.architectury_version}"
+    modApi("org.valkyrienskies:valkyrienskies-118-fabric:${rootProject.vs2_version}")
 
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }
@@ -33,7 +43,7 @@ processResources {
     inputs.property "version", project.version
 
     filesMatching("fabric.mod.json") {
-        expand "version": project.version
+        expand "version": project.version, "vs2_version": project.vs2_version.substring(0, project.vs2_version.indexOf('+'))
     }
 }
 

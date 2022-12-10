@@ -1,11 +1,11 @@
-package net.examplemod.fabric;
+package net.takeoff.fabric;
 
-import net.examplemod.ExampleMod;
+import net.takeoff.TakeoffMod;
 import net.fabricmc.api.ModInitializer;
 
 public class ExampleModFabric implements ModInitializer {
     @Override
     public void onInitialize() {
-        ExampleMod.init();
+        TakeoffMod.init();
     }
 }
