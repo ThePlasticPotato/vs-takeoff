@@ -80,10 +80,10 @@ class TakeoffShipControl : ShipForcesInducer, ServerShipUser, Ticked {
 
         // region Aligning
 
-        val invRotation = physShip.poseVel.rot.invert(Quaterniond())
-        val invRotationAxisAngle = AxisAngle4d(invRotation)
-        // Floor makes a number 0 to 3, which corresponds to direction
-
+//        val invRotation = physShip.poseVel.rot.invert(Quaterniond())
+//        val invRotationAxisAngle = AxisAngle4d(invRotation)
+//        // Floor makes a number 0 to 3, which corresponds to direction
+//
 //        stabilize(
 //            physShip,
 //            omega,
@@ -93,107 +93,96 @@ class TakeoffShipControl : ShipForcesInducer, ServerShipUser, Ticked {
 //            controllingPlayer == null && !aligning,
 //            controllingPlayer == null
 //        )
-
-        var idealUpwardVel = Vector3d(0.0, 0.0, 0.0)
-
-
-        controlData?.let { control ->
-            // region Player controlled rotation
-            var rotationVector = Vector3d(
-                0.0,
-                if (control.leftImpulse != 0.0f)
-                    (control.leftImpulse.toDouble() * 3.0)
-                else
-                    -omega.y() * 3.0,
-                0.0
-            )
-
-            rotationVector.sub(0.0, omega.y(), 0.0)
-
-            SegmentUtils.transformDirectionWithScale(
-                physShip.poseVel,
-                segment,
-                moiTensor.transform(
-                    SegmentUtils.invTransformDirectionWithScale(
-                        physShip.poseVel,
-                        segment,
-                        rotationVector,
-                        rotationVector
-                    )
-                ),
-                rotationVector
-            )
-
-            forcesApplier.applyInvariantTorque(rotationVector)
+//
+//        var idealUpwardVel = Vector3d(0.0, 0.0, 0.0)
+//
+//
+//        controlData?.let { control ->
+//            // region Player controlled rotation
+//            var rotationVector = Vector3d(
+//                0.0,
+//                if (control.leftImpulse != 0.0f)
+//                    (control.leftImpulse.toDouble() * 3.0)
+//                else
+//                    -omega.y() * 3.0,
+//                0.0
+//            )
+//
+//            rotationVector.sub(0.0, omega.y(), 0.0)
+//
+//            SegmentUtils.transformDirectionWithScale(
+//                physShip.poseVel,
+//                segment,
+//                moiTensor.transform(
+//                    SegmentUtils.invTransformDirectionWithScale(
+//                        physShip.poseVel,
+//                        segment,
+//                        rotationVector,
+//                        rotationVector
+//                    )
+//                ),
+//                rotationVector
+//            )
+//
+//            forcesApplier.applyInvariantTorque(rotationVector)
             // endregion
 
             // region Player controlled banking
 
-            physShip.poseVel.transformDirection(rotationVector)
-
-            rotationVector.y = 0.0
-
-            rotationVector.mul(control.leftImpulse.toDouble() * 3.0 * -1.5)
-
-            SegmentUtils.transformDirectionWithScale(
-                physShip.poseVel,
-                segment,
-                moiTensor.transform(
-                    SegmentUtils.invTransformDirectionWithScale(
-                        physShip.poseVel,
-                        segment,
-                        rotationVector,
-                        rotationVector
-                    )
-                ),
-                rotationVector
-            )
-
-            forcesApplier.applyInvariantTorque(rotationVector)
+//            physShip.poseVel.transformDirection(rotationVector)
+//
+//            rotationVector.y = 0.0
+//
+//            rotationVector.mul(control.leftImpulse.toDouble() * 3.0 * -1.5)
+//
+//            SegmentUtils.transformDirectionWithScale(
+//                physShip.poseVel,
+//                segment,
+//                moiTensor.transform(
+//                    SegmentUtils.invTransformDirectionWithScale(
+//                        physShip.poseVel,
+//                        segment,
+//                        rotationVector,
+//                        rotationVector
+//                    )
+//                ),
+//                rotationVector
+//            )
+//
+//            forcesApplier.applyInvariantTorque(rotationVector)
             // endregion
 
-            // region Player controlled forward and backward thrust
-            val forwardVector =
-            SegmentUtils.transformDirectionWithoutScale(
-                physShip.poseVel,
-                segment,
-                forwardVector,
-                forwardVector
-            )
-            forwardVector.y *= 0.1 // Reduce vertical thrust
-            forwardVector.normalize()
 
-            forwardVector.mul(control.forwardImpulse.toDouble())
 
-            val playerUpDirection = physShip.poseVel.transformDirection(Vector3d(0.0, 1.0, 0.0))
-            val velOrthogonalToPlayerUp =
-                vel.sub(playerUpDirection.mul(playerUpDirection.dot(vel), Vector3d()), Vector3d())
+//            val playerUpDirection = physShip.poseVel.transformDirection(Vector3d(0.0, 1.0, 0.0))
+//            val velOrthogonalToPlayerUp =
+//                vel.sub(playerUpDirection.mul(playerUpDirection.dot(vel), Vector3d()), Vector3d())
+//
+//            // This is the speed that the ship is always allowed to go out, without engines
+//            val baseForwardVel = Vector3d(forwardVector).mul(3.0)
+//            val baseForwardForce = Vector3d(baseForwardVel).sub(velOrthogonalToPlayerUp).mul(mass * 10)
+//
+//            // This is the maximum speed we want to go in any scenario (when not sprinting)
+//            val idealForwardVel = Vector3d(forwardVector).mul(20.0)
+//            val idealForwardForce = Vector3d(idealForwardVel).sub(velOrthogonalToPlayerUp).mul(mass * 10)
+//
+//            val extraForceNeeded = Vector3d(idealForwardForce).sub(baseForwardForce)
+//            val actualExtraForce = Vector3d(baseForwardForce)
+//
+//            if (extraForce != 0.0) {
+//                actualExtraForce.fma(min(extraForce / extraForceNeeded.length(), 1.0), extraForceNeeded)
+//            }
 
-            // This is the speed that the ship is always allowed to go out, without engines
-            val baseForwardVel = Vector3d(forwardVector).mul(3.0)
-            val baseForwardForce = Vector3d(baseForwardVel).sub(velOrthogonalToPlayerUp).mul(mass * 10)
-
-            // This is the maximum speed we want to go in any scenario (when not sprinting)
-            val idealForwardVel = Vector3d(forwardVector).mul(20.0)
-            val idealForwardForce = Vector3d(idealForwardVel).sub(velOrthogonalToPlayerUp).mul(mass * 10)
-
-            val extraForceNeeded = Vector3d(idealForwardForce).sub(baseForwardForce)
-            val actualExtraForce = Vector3d(baseForwardForce)
-
-            if (extraForce != 0.0) {
-                actualExtraForce.fma(min(extraForce / extraForceNeeded.length(), 1.0), extraForceNeeded)
-            }
-
-            forcesApplier.applyInvariantForce(actualExtraForce)
+//            forcesApplier.applyInvariantForce(actualExtraForce)
             // endregion
 
             // Player controlled elevation
-            if (control.upImpulse != 0.0f) {
-                idealUpwardVel = Vector3d(0.0, 1.0, 0.0)
-                    .mul(control.upImpulse.toDouble())
-                    .mul(7.0)
-            }
-        }
+//            if (control.upImpulse != 0.0f) {
+//                idealUpwardVel = Vector3d(0.0, 1.0, 0.0)
+//                    .mul(control.upImpulse.toDouble())
+//                    .mul(7.0)
+//            }
+//        }
 
         // region Elevation
         // Higher numbers make the ship accelerate to max speed faster
