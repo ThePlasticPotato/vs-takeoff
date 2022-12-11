@@ -21,7 +21,6 @@ import org.valkyrienskies.core.impl.pipelines.SegmentUtils
 import net.takeoff.TakeoffConfig
 import org.joml.Vector3d
 import org.joml.Vector3dc
-import org.valkyrienskies.mod.common.util.toJOML
 import org.valkyrienskies.mod.common.util.toJOMLD
 import kotlin.math.*
 
@@ -107,11 +106,10 @@ class TakeoffShipControl : ShipForcesInducer, ServerShipUser, Ticked {
 //        totalloc.x = totalloc.x/balloons
 //        totalloc.y = totalloc.y/balloons
 //        totalloc.div = totalloc.z/balloons
-
+        val shipCoords = Vector3d(ship?.transform?.positionInShip)
         balloonpos.forEach() {
-            val shipCoords = Vector3d(ship?.transform?.positionInShip)
             if (actualUpwardForce.isFinite) {
-                forcesApplier.applyInvariantForceToPos(actualUpwardForce, it.toJOMLD().sub(shipCoords))
+                forcesApplier.applyInvariantForceToPos(actualUpwardForce, it.sub(shipCoords))
             }
         }
         // end region
@@ -240,7 +238,7 @@ class TakeoffShipControl : ShipForcesInducer, ServerShipUser, Ticked {
             field = v; deleteIfEmpty()
         }
 
-    var balloonpos = mutableListOf<BlockPos>()
+    var balloonpos = mutableListOf<Vector3d>()
 
     override fun tick() {
         extraForce = power

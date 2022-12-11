@@ -29,9 +29,10 @@ class BalloonBlock(properties: Properties) : Block(properties) {
 
         if (level.isClientSide) return
         level as ServerLevel
+        val vecpos = pos.toJOMLD()
         val ship = level.getShipObjectManagingPos(pos) ?: level.getShipManagingPos(pos) ?: return
         TakeoffShipControl.getOrCreate(ship).balloons += 1
-        TakeoffShipControl.getOrCreate(ship).balloonpos += pos
+        TakeoffShipControl.getOrCreate(ship).balloonpos += vecpos
     }
 
     override fun onRemove(state: BlockState, level: Level, pos: BlockPos, newState: BlockState, isMoving: Boolean) {
@@ -42,7 +43,7 @@ class BalloonBlock(properties: Properties) : Block(properties) {
 
         level.getShipManagingPos(pos)?.getAttachment<TakeoffShipControl>()?.let {
             it.balloons -= 1
-            it.balloonpos -= pos
+            it.balloonpos -= pos.toJOMLD()
         }
     }
     override fun onProjectileHit(level: Level, state: BlockState, hit: BlockHitResult, projectile: Projectile) {
