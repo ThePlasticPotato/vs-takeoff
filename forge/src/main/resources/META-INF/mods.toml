@@ -27,6 +27,13 @@ versionRange = "[1.18.2,)"
 ordering = "NONE"
 side = "BOTH"
 
+[[dependencies.vs_takeoff]]
+modId = "valkyrienskies"
+mandatory = true
+versionRange = "[${vs2_version},)"
+ordering = "AFTER"
+side = "BOTH"
+
 #[[dependencies.vs_takeoff]]
 #modId = "create"
 #mandatory = true
