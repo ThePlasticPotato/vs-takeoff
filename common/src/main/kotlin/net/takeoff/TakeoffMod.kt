@@ -20,5 +20,6 @@ object TakeoffMod {
     @JvmStatic
     fun initClient() {
         //TakeoffClientScreens.register()
+        //
     }
 }
