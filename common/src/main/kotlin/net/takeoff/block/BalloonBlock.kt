@@ -18,6 +18,7 @@ import net.takeoff.TakeoffConfig
 import net.takeoff.ship.TakeoffShipControl
 import org.valkyrienskies.mod.common.getShipManagingPos
 import org.valkyrienskies.mod.common.getShipObjectManagingPos
+import org.valkyrienskies.mod.common.util.toJOMLD
 
 class BalloonBlock(properties: Properties) : Block(properties) {
     override fun fallOn(level: Level, state: BlockState, blockPos: BlockPos, entity: Entity, f: Float) {
@@ -28,7 +29,6 @@ class BalloonBlock(properties: Properties) : Block(properties) {
 
         if (level.isClientSide) return
         level as ServerLevel
-
         val ship = level.getShipObjectManagingPos(pos) ?: level.getShipManagingPos(pos) ?: return
         TakeoffShipControl.getOrCreate(ship).balloons += 1
         TakeoffShipControl.getOrCreate(ship).balloonpos += pos

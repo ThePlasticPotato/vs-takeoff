@@ -21,6 +21,7 @@ import org.valkyrienskies.core.impl.pipelines.SegmentUtils
 import net.takeoff.TakeoffConfig
 import org.joml.Vector3d
 import org.joml.Vector3dc
+import org.valkyrienskies.mod.common.util.toJOML
 import org.valkyrienskies.mod.common.util.toJOMLD
 import kotlin.math.*
 
@@ -92,7 +93,7 @@ class TakeoffShipControl : ShipForcesInducer, ServerShipUser, Ticked {
             0.0
         ).mul(mass * 10.0)
 
-        val balloonForceProvided = forcePerBalloon * balloons
+        val balloonForceProvided = forcePerBalloon
         val actualUpwardForce = Vector3d(0.0, (balloonForceProvided / (GRAVITY * mass)), 0.0)
 //        val actualUpwardForce = Vector3d(0.0, min(balloonForceProvided, max(idealUpwardForce.y(), 0.0)), 0.0)
 
@@ -106,7 +107,13 @@ class TakeoffShipControl : ShipForcesInducer, ServerShipUser, Ticked {
 //        totalloc.x = totalloc.x/balloons
 //        totalloc.y = totalloc.y/balloons
 //        totalloc.div = totalloc.z/balloons
-        forcesApplier.applyInvariantForceToPos(actualUpwardForce, avgloc)
+
+        balloonpos.forEach() {
+            val shipCoords = Vector3d(ship?.transform?.positionInShip)
+            if (actualUpwardForce.isFinite) {
+                forcesApplier.applyInvariantForceToPos(actualUpwardForce, it.toJOMLD().sub(shipCoords))
+            }
+        }
         // end region
 
 
@@ -240,21 +247,21 @@ class TakeoffShipControl : ShipForcesInducer, ServerShipUser, Ticked {
         power = 0.0
         consumed = physConsumption * /* should be phyics ticks based*/ 0.1f
         physConsumption = 0.0f
-        balloonTick()
+//        balloonTick()
     }
 
-    private fun balloonTick() {
-        if (balloons>0) {
-            totalloc = Vector3d(0.0,0.0,0.0)
-            for (i in 1..balloons) {
-                var loc = (balloonpos.get(i-1).toJOMLD())
-                totalloc.x += loc.x
-                totalloc.y += loc.y
-                totalloc.z += loc.z
-            }
-            avgloc = totalloc.div(balloons.toDouble())
-        }
-    }
+//    private fun balloonTick() {
+//        if (balloons>0) {
+//            totalloc = Vector3d(0.0,0.0,0.0)
+//            for (i in 1..balloons) {
+//                var loc = (balloonpos.get(i-1))
+//                totalloc.x += loc.x
+//                totalloc.y += loc.y
+//                totalloc.z += loc.z
+//            }
+//            avgloc = totalloc.div(balloons.toDouble())
+//        }
+//    }
 
     private fun deleteIfEmpty() {
         if (balloons == 0) {
