@@ -8,7 +8,6 @@ import net.minecraft.world.level.block.Block
 import org.joml.AxisAngle4d
 import org.joml.Math.clamp
 import org.joml.Quaterniond
-import org.joml.Vector3d
 import org.valkyrienskies.core.api.ships.PhysShip
 import org.valkyrienskies.core.api.ships.ServerShip
 import org.valkyrienskies.core.api.ships.getAttachment
@@ -20,6 +19,7 @@ import org.valkyrienskies.core.impl.api.shipValue
 import org.valkyrienskies.core.impl.game.ships.PhysShipImpl
 import org.valkyrienskies.core.impl.pipelines.SegmentUtils
 import net.takeoff.TakeoffConfig
+import org.joml.Vector3d
 import org.joml.Vector3dc
 import org.valkyrienskies.mod.common.util.toJOMLD
 import kotlin.math.*
@@ -37,6 +37,8 @@ class TakeoffShipControl : ShipForcesInducer, ServerShipUser, Ticked {
 
     private var extraForce = 0.0
     private var physConsumption = 0f
+    private var totalloc = Vector3d(0.0,0.0,0.0)
+    private var avgloc = Vector3d(0.0, 0.0, 0.0)
     var consumed = 0f
         private set
 
@@ -90,21 +92,21 @@ class TakeoffShipControl : ShipForcesInducer, ServerShipUser, Ticked {
             0.0
         ).mul(mass * 10.0)
 
-        val balloonForceProvided = forcePerBalloon
-        var totalloc = Vector3d (0.0,0.0,0.0)
-        val actualUpwardForce = Vector3d(0.0, min(balloonForceProvided, max(idealUpwardForce.y(), 0.0)), 0.0)
+        val balloonForceProvided = forcePerBalloon * balloons
+        val actualUpwardForce = Vector3d(0.0, (balloonForceProvided / (GRAVITY * mass)), 0.0)
+//        val actualUpwardForce = Vector3d(0.0, min(balloonForceProvided, max(idealUpwardForce.y(), 0.0)), 0.0)
 
-        for (i in 1..balloons) {
-            var loc = (balloonpos.get(i-1).toJOMLD())
-            totalloc.x += loc.x
-            totalloc.y += loc.y
-            totalloc.z += loc.z
-        }
-        totalloc.div(balloons.toDouble())
+//        for (i in 1..balloons) {
+//            var loc = (balloonpos.get(i-1).toJOMLD())
+//            totalloc.x += loc.x
+//            totalloc.y += loc.y
+//            totalloc.z += loc.z
+//        }
+//        totalloc.div(balloons.toDouble())
 //        totalloc.x = totalloc.x/balloons
 //        totalloc.y = totalloc.y/balloons
 //        totalloc.div = totalloc.z/balloons
-        forcesApplier.applyInvariantForceToPos(actualUpwardForce, totalloc)
+        forcesApplier.applyInvariantForceToPos(actualUpwardForce, avgloc)
         // end region
 
 
@@ -238,6 +240,20 @@ class TakeoffShipControl : ShipForcesInducer, ServerShipUser, Ticked {
         power = 0.0
         consumed = physConsumption * /* should be phyics ticks based*/ 0.1f
         physConsumption = 0.0f
+        balloonTick()
+    }
+
+    private fun balloonTick() {
+        if (balloons>0) {
+            totalloc = Vector3d(0.0,0.0,0.0)
+            for (i in 1..balloons) {
+                var loc = (balloonpos.get(i-1).toJOMLD())
+                totalloc.x += loc.x
+                totalloc.y += loc.y
+                totalloc.z += loc.z
+            }
+            avgloc = totalloc.div(balloons.toDouble())
+        }
     }
 
     private fun deleteIfEmpty() {
@@ -252,7 +268,7 @@ class TakeoffShipControl : ShipForcesInducer, ServerShipUser, Ticked {
                 ?: TakeoffShipControl().also { ship.saveAttachment(it) }
         }
 
-        private val forcePerBalloon get() = 500 * -GRAVITY
+        private val forcePerBalloon get() = 5000 * -GRAVITY
 
         private const val GRAVITY = -10.0
     }
