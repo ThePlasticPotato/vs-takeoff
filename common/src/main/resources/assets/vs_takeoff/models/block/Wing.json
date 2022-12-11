@@ -2,8 +2,8 @@
 	"credit": "Made with Blockbench",
 	"texture_size": [64, 64],
 	"textures": {
-		"0": "wing",
-		"particle": "wing"
+		"0": "vs_takeoff:wing",
+		"particle": "vs_takeoff:wing"
 	},
 	"elements": [
 		{
