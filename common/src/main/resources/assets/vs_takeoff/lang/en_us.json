@@ -1,3 +1,5 @@
 {
-  "item.examplemod.example_item": "Example Item"
+  "block.vs_takeoff.balloon": "Balloon",
+  "block.vs_takeoff.farter": "Farter",
+  "block.vs_takeoff.wing": "Wing"
 }

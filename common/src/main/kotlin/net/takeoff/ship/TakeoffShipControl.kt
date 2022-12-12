@@ -39,7 +39,7 @@ class TakeoffShipControl : ShipForcesInducer, ServerShipUser, Ticked {
     private var physConsumption = 0f
     private var totalloc = Vector3d(0.0,0.0,0.0)
     private var avgloc = Vector3d(0.0, 0.0, 0.0)
-    private val farters = mutableListOf<Pair<BlockPos, Direction>>()
+    private val farters = mutableListOf<Pair<Vector3dc, Direction>>()
     var consumed = 0f
         private set
 
@@ -244,16 +244,19 @@ class TakeoffShipControl : ShipForcesInducer, ServerShipUser, Ticked {
         // Drag
         // forcesApplier.applyInvariantForce(Vector3d(vel.y()).mul(-mass))
 
-        val ship = ship ?: return
+//        val ship = ship ?: return
 
         farters.forEach {
             val (pos, dir) = it
 
-            val tPos = ship.shipToWorld.transformPosition(pos.toJOMLD()).sub(ship.transform.positionInWorld)
-            val tDir = ship.shipToWorld.transformDirection(dir.normal.toJOMLD(), Vector3d())
-            tDir.normalize(-10000.0)
-
-            physShip.applyInvariantForceToPos(tDir, tPos)
+            val tPos = ship?.shipToWorld?.transformPosition(Vector3d(pos))?.sub(shipCoords)
+            val tDir = ship?.shipToWorld?.transformDirection(dir.normal.toJOMLD(), Vector3d())
+            tDir?.normalize(-10000.0)
+//
+//            physShip?.applyInvariantForceToPos(tDir, tPos)
+            if (tDir?.isFinite == true && tPos != null) {
+//                forcesApplier.applyRotDependentForceToPos()
+            }
         }
     }
     var power = 0.0
@@ -292,11 +295,11 @@ class TakeoffShipControl : ShipForcesInducer, ServerShipUser, Ticked {
         }
     }
 
-    fun addFarter(pos: BlockPos, dir: Direction) {
+    fun addFarter(pos: Vector3dc, dir: Direction) {
         farters.add(pos to dir)
     }
 
-    fun removeFarter(pos: BlockPos, dir: Direction) {
+    fun removeFarter(pos: Vector3dc, dir: Direction) {
         farters.remove(pos to dir)
     }
 

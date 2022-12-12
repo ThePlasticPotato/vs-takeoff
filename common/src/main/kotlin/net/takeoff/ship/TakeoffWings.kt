@@ -23,7 +23,7 @@ class TakeoffWings(@JsonIgnore override var ship: ServerShip?) : ShipForcesInduc
 
     override fun applyForces(physShip: PhysShip) {
         val ship = ship as ServerShip
-
+        val forcesApplier = physShip
         wings.forEach {
             val (pos, dir) = it
 
@@ -41,7 +41,7 @@ class TakeoffWings(@JsonIgnore override var ship: ServerShip?) : ShipForcesInduc
 
             //tDir.normalize(1000.0)
 
-            //physShip.applyInvariantForceToPos(tDir, tPos)
+            forcesApplier.applyInvariantForceToPos(tDir, tPos)
         }
     }
 

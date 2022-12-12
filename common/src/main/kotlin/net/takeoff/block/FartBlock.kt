@@ -17,6 +17,7 @@ import net.minecraft.world.level.material.Material
 import net.minecraft.world.phys.Vec3
 import net.takeoff.ship.TakeoffShipControl
 import net.takeoff.ship.TakeoffWings
+import org.joml.Vector3d
 import org.valkyrienskies.core.api.ships.getAttachment
 import org.valkyrienskies.mod.common.getShipManagingPos
 import org.valkyrienskies.mod.common.getShipObjectManagingPos
@@ -43,9 +44,12 @@ class FartBlock : HorizontalDirectionalBlock(Properties.of(Material.BAMBOO)) {
 
         if (level.isClientSide) return
         level as ServerLevel
-
+        val vecpos = pos.toJOMLD()
+        vecpos.x = vecpos.x+0.5
+        vecpos.y = vecpos.y+0.5
+        vecpos.z = vecpos.z+0.5
         val ship = level.getShipObjectManagingPos(pos) ?: level.getShipManagingPos(pos) ?: return
-        TakeoffShipControl.getOrCreate(ship).addFarter(pos, state.getValue(FACING))
+        TakeoffShipControl.getOrCreate(ship).addFarter(vecpos, state.getValue(FACING))
     }
 
     override fun onRemove(state: BlockState, level: Level, pos: BlockPos, newState: BlockState, isMoving: Boolean) {
@@ -53,8 +57,11 @@ class FartBlock : HorizontalDirectionalBlock(Properties.of(Material.BAMBOO)) {
 
         if (level.isClientSide) return
         level as ServerLevel
-
-        level.getShipManagingPos(pos)?.getAttachment<TakeoffShipControl>()?.removeFarter(pos, state.getValue(FACING))
+        val vecpos = pos.toJOMLD()
+        vecpos.x = vecpos.x+0.5
+        vecpos.y = vecpos.y+0.5
+        vecpos.z = vecpos.z+0.5
+        level.getShipManagingPos(pos)?.getAttachment<TakeoffShipControl>()?.removeFarter(vecpos, state.getValue(FACING))
     }
 
     override fun getStateForPlacement(ctx: BlockPlaceContext): BlockState {
