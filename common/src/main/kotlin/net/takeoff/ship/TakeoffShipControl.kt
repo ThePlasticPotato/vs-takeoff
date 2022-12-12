@@ -94,7 +94,7 @@ class TakeoffShipControl : ShipForcesInducer, ServerShipUser, Ticked {
         ).mul(mass * 10.0)
 
         val balloonForceProvided = forcePerBalloon
-        val actualUpwardForce = Vector3d(0.0, (5000.0), 0.0)
+
 //        val actualUpwardForce = Vector3d(0.0, min(balloonForceProvided, max(idealUpwardForce.y(), 0.0)), 0.0)
 
 //        for (i in 1..balloons) {
@@ -108,6 +108,17 @@ class TakeoffShipControl : ShipForcesInducer, ServerShipUser, Ticked {
 //        totalloc.y = totalloc.y/balloons
 //        totalloc.div = totalloc.z/balloons
         val shipCoords = Vector3d(ship?.transform?.positionInShip)
+        val shipCoordsinworld = Vector3d(ship?.transform?.positionInWorld)
+        var falloffamount = 0.0
+        var falloff = 1.0
+        if (shipCoordsinworld.y > 256) {
+            falloffamount = shipCoordsinworld.y - 256
+            falloff = falloffamount*(1.5)
+
+        } else {
+            falloff = 1.0
+        }
+        val actualUpwardForce = Vector3d(0.0, (5000.0/falloff), 0.0)
         balloonpos.forEach() {
             if (actualUpwardForce.isFinite) {
                 forcesApplier.applyInvariantForceToPos(actualUpwardForce, Vector3d(it).sub(shipCoords))
