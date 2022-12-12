@@ -20,5 +20,9 @@ object TakeoffMod {
     @JvmStatic
     fun initClient() {
         //TakeoffClientScreens.register()
+<<<<<<< Updated upstream
+=======
+        // e
+>>>>>>> Stashed changes
     }
 }
