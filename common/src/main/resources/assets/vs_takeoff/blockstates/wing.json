@@ -1,18 +1,18 @@
 {
   "variants": {
     "facing=north": {
-      "model": "vs_takeoff:block/Wing"
+      "model": "vs_takeoff:block/wing"
     },
     "facing=east": {
-      "model": "vs_takeoff:block/Wing",
+      "model": "vs_takeoff:block/wing",
       "y": 90
     },
     "facing=south": {
-      "model": "vs_takeoff:block/Wing",
+      "model": "vs_takeoff:block/wing",
       "y": 180
     },
     "facing=west": {
-      "model": "vs_takeoff:block/Wing",
+      "model": "vs_takeoff:block/wing",
       "y": 270
     }
   }
