@@ -73,20 +73,18 @@ class FartBlock : HorizontalDirectionalBlock(Properties.of(Material.BAMBOO)) {
         super.animateTick(state, level, pos, random)
         val dir = state.getValue(FACING)
 
-        val x = pos.x.toDouble() + 0.5;
-        val y = pos.y.toDouble() + 0.5;
-        val z = pos.z.toDouble() + 0.5;
-        val speedX = dir.stepX * 0.69
-        val speedY = dir.stepY * 0.69
-        val speedZ = dir.stepZ * 0.69
+        val x = pos.x.toDouble() + (0.5 * (dir.stepX + 1));
+        val y = pos.y.toDouble() + (0.5 * (dir.stepY + 1));
+        val z = pos.z.toDouble() + (0.5 * (dir.stepZ + 1));
+        val speedX = dir.stepX * 0.24
+        val speedY = dir.stepY * 0.24
+        val speedZ = dir.stepZ * 0.24
 
         for (i in 0..16) {
             val x2 = x + random.nextDouble() * 0.2 - 0.1
             val y2 = y + random.nextDouble() * 0.2 - 0.1
             val z2 = z + random.nextDouble() * 0.2 - 0.1
-            level.addParticle(ParticleTypes.CLOUD, x2, y2, z2, speedX, speedY, speedZ)
+            level.addParticle(ParticleTypes.CAMPFIRE_COSY_SMOKE, x2, y2, z2, speedX, speedY, speedZ)
         }
-
-        level.addParticle(ParticleTypes.CRIT, x, y, z, speedX, speedY, speedZ)
     }
 }
