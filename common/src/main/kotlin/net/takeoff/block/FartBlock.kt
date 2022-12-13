@@ -44,12 +44,8 @@ class FartBlock : HorizontalDirectionalBlock(Properties.of(Material.BAMBOO)) {
 
         if (level.isClientSide) return
         level as ServerLevel
-        val vecpos = pos.toJOMLD()
-        vecpos.x = vecpos.x+0.5
-        vecpos.y = vecpos.y+0.5
-        vecpos.z = vecpos.z+0.5
         val ship = level.getShipObjectManagingPos(pos) ?: level.getShipManagingPos(pos) ?: return
-        TakeoffShipControl.getOrCreate(ship).addFarter(vecpos, state.getValue(FACING))
+        TakeoffShipControl.getOrCreate(ship).addFarter(pos, state.getValue(FACING))
     }
 
     override fun onRemove(state: BlockState, level: Level, pos: BlockPos, newState: BlockState, isMoving: Boolean) {
@@ -57,11 +53,7 @@ class FartBlock : HorizontalDirectionalBlock(Properties.of(Material.BAMBOO)) {
 
         if (level.isClientSide) return
         level as ServerLevel
-        val vecpos = pos.toJOMLD()
-        vecpos.x = vecpos.x+0.5
-        vecpos.y = vecpos.y+0.5
-        vecpos.z = vecpos.z+0.5
-        level.getShipManagingPos(pos)?.getAttachment<TakeoffShipControl>()?.removeFarter(vecpos, state.getValue(FACING))
+        level.getShipManagingPos(pos)?.getAttachment<TakeoffShipControl>()?.removeFarter(pos, state.getValue(FACING))
     }
 
     override fun getStateForPlacement(ctx: BlockPlaceContext): BlockState {

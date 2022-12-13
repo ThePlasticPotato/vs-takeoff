@@ -5,9 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.world.level.block.Block
-import org.joml.AxisAngle4d
 import org.joml.Math.clamp
-import org.joml.Quaterniond
 import org.valkyrienskies.core.api.ships.PhysShip
 import org.valkyrienskies.core.api.ships.ServerShip
 import org.valkyrienskies.core.api.ships.getAttachment
@@ -19,8 +17,8 @@ import org.valkyrienskies.core.impl.api.shipValue
 import org.valkyrienskies.core.impl.game.ships.PhysShipImpl
 import org.valkyrienskies.core.impl.pipelines.SegmentUtils
 import net.takeoff.TakeoffConfig
-import org.joml.Vector3d
-import org.joml.Vector3dc
+import org.joml.*
+import org.valkyrienskies.mod.common.util.toJOML
 import org.valkyrienskies.mod.common.util.toJOMLD
 import kotlin.math.*
 
@@ -39,7 +37,7 @@ class TakeoffShipControl : ShipForcesInducer, ServerShipUser, Ticked {
     private var physConsumption = 0f
     private var totalloc = Vector3d(0.0,0.0,0.0)
     private var avgloc = Vector3d(0.0, 0.0, 0.0)
-    private val farters = mutableListOf<Pair<Vector3dc, Direction>>()
+    private val farters = mutableListOf<Pair<Vector3i, Direction>>()
     var consumed = 0f
         private set
 
@@ -249,7 +247,7 @@ class TakeoffShipControl : ShipForcesInducer, ServerShipUser, Ticked {
         farters.forEach {
             val (pos, dir) = it
 
-            val tPos = ship?.shipToWorld?.transformPosition(Vector3d(pos))?.sub(shipCoordsinworld)
+            val tPos = ship?.shipToWorld?.transformPosition(Vector3d(pos).add(0.5, 0.5, 0.5))?.sub(shipCoordsinworld)
             val tDir = ship?.shipToWorld?.transformDirection(dir.normal.toJOMLD(), Vector3d())
             tDir?.normalize(-10000.0)
 //
@@ -296,12 +294,12 @@ class TakeoffShipControl : ShipForcesInducer, ServerShipUser, Ticked {
         }
     }
 
-    fun addFarter(pos: Vector3dc, dir: Direction) {
-        farters.add(pos to dir)
+    fun addFarter(pos: BlockPos, dir: Direction) {
+        farters.add(pos.toJOML() to dir)
     }
 
-    fun removeFarter(pos: Vector3dc, dir: Direction) {
-        farters.remove(pos to dir)
+    fun removeFarter(pos: BlockPos, dir: Direction) {
+        farters.remove(pos.toJOML() to dir)
     }
 
     companion object {

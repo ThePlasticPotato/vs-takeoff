@@ -24,6 +24,9 @@ object TakeoffBlocks {
     val WING = BLOCKS.register("wing", ::WingBlock)
     val FARTER = BLOCKS.register("farter", ::FartBlock)
 
+    val NORTH_MAGNET = BLOCKS.register("nmagnet") { MagnetBlock(true) }
+    val SOUTH_MAGNET = BLOCKS.register("smagnet") { MagnetBlock(false) }
+
     // region Balloons
     val BALLOON = BLOCKS.register("balloon") {
         BalloonBlock(
