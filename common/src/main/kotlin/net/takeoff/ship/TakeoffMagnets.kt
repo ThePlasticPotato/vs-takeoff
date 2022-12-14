@@ -29,14 +29,13 @@ class TakeoffMagnets(@JsonIgnore override var ship: ServerShip?) : ShipForcesInd
                 val tPos = ship.shipToWorld.transformPosition(Vector3d(pos).add(0.5, 0.5, 0.5))
 
                 otherMagnets.forEach { other ->
-                    val (otherPos, _) = other
-                    val tPosOther = ship.shipToWorld.transformPosition(Vector3d(otherPos).add(0.5, 0.5, 0.5))
+                    val tPosOther = other.lastWorldPos
 
                     var dist = tPosOther.distanceSquared(tPos)
                     if (dist > MAGNET_DISTANCE) return
                     if (dist < 0.1) dist = 0.1
 
-                    val power = MAGNET_POWER / dist
+                    val power = (MAGNET_POWER / 100) / dist
                     val force = Vector3d(tPos).sub(tPosOther).normalize(-power)
 
                     //force.negate()
@@ -67,7 +66,7 @@ class TakeoffMagnets(@JsonIgnore override var ship: ServerShip?) : ShipForcesInd
 
     companion object {
         val MAGNET_DISTANCE = 10 * 10
-        val MAGNET_POWER = 1000000.0 * 1000000.0
+        val MAGNET_POWER = 100.0 * 100.0
 
         fun getOrCreate(ship: ServerShip): TakeoffMagnets =
             ship.getAttachment<TakeoffMagnets>()
