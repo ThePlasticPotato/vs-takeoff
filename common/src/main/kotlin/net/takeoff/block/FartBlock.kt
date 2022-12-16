@@ -25,7 +25,7 @@ import org.valkyrienskies.mod.common.util.toJOMLD
 import java.util.*
 
 
-class FartBlock : HorizontalDirectionalBlock(Properties.of(Material.BAMBOO)) {
+class FartBlock : DirectionalBlock(Properties.of(Material.BAMBOO)) {
 
     init {
         registerDefaultState(defaultBlockState().setValue(FACING, Direction.NORTH))
@@ -58,7 +58,7 @@ class FartBlock : HorizontalDirectionalBlock(Properties.of(Material.BAMBOO)) {
 
     override fun getStateForPlacement(ctx: BlockPlaceContext): BlockState {
         return defaultBlockState()
-            .setValue(FACING, ctx.horizontalDirection.opposite)
+            .setValue(FACING, ctx.nearestLookingDirection.opposite)
     }
 
     override fun animateTick(state: BlockState, level: Level, pos: BlockPos, random: Random) {

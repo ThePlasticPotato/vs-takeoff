@@ -15,6 +15,14 @@
     "facing=west": {
       "model": "vs_takeoff:block/farter",
       "y": 90
+    },
+    "facing=up": {
+      "model": "vs_takeoff:block/farter",
+      "x": 90
+    },
+    "facing=down": {
+      "model": "vs_takeoff:block/farter",
+      "x": 270
     }
   }
 }
