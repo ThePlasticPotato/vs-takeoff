@@ -247,13 +247,13 @@ class TakeoffShipControl : ShipForcesInducer, ServerShipUser, Ticked {
         farters.forEach {
             val (pos, dir) = it
 
-            val tPos = ship?.shipToWorld?.transformPosition(Vector3d(pos).add(0.5, 0.5, 0.5))?.sub(shipCoordsinworld)
+            val tPos = ship?.shipToWorld?.transformPosition(Vector3d(pos))?.add(0.5,0.5,0.5)?.sub(shipCoordsinworld)
             val tDir = ship?.shipToWorld?.transformDirection(dir.normal.toJOMLD(), Vector3d())
             tDir?.normalize(-10000.0)
 //
 
             if (tDir?.isFinite == true && tPos != null) {
-                physShip.applyInvariantForceToPos(tDir, tPos)
+                physShip.applyRotDependentForceToPos(tDir, tPos)
 //                forcesApplier.applyRotDependentForceToPos()
             }
         }
