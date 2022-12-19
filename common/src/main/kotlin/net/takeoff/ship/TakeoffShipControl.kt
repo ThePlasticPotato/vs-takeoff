@@ -253,7 +253,7 @@ class TakeoffShipControl : ShipForcesInducer, ServerShipUser, Ticked {
 //
 
             if (tDir?.isFinite == true && tPos != null) {
-                physShip.applyRotDependentForceToPos(tDir, tPos)
+                physShip.applyInvariantForceToPos(tDir, tPos)
 //                forcesApplier.applyRotDependentForceToPos()
             }
         }

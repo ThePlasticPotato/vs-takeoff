@@ -1,4 +1,5 @@
 package net.takeoff
+import net.minecraft.resources.ResourceLocation
 import org.valkyrienskies.core.impl.config.VSConfigClass
 
 
@@ -22,4 +23,6 @@ object TakeoffMod {
         //TakeoffClientScreens.register()
         //
     }
+
+    val String.resource: ResourceLocation get() = ResourceLocation(MOD_ID, this)
 }
