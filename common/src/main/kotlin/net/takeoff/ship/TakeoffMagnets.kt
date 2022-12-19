@@ -5,6 +5,7 @@ import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.internal.synchronized
 import net.minecraft.core.BlockPos
 import org.joml.Vector3d
+import org.joml.Vector3dc
 import org.joml.Vector3i
 import org.valkyrienskies.core.api.ships.PhysShip
 import org.valkyrienskies.core.api.ships.ServerShip
@@ -13,6 +14,8 @@ import org.valkyrienskies.core.api.ships.saveAttachment
 import org.valkyrienskies.core.impl.api.ServerShipUser
 import org.valkyrienskies.core.impl.api.ShipForcesInducer
 import org.valkyrienskies.core.impl.api.Ticked
+import org.valkyrienskies.core.impl.game.ships.PhysShipImpl
+import org.valkyrienskies.core.impl.pipelines.SegmentUtils
 import org.valkyrienskies.mod.common.util.toJOML
 import java.util.concurrent.CopyOnWriteArrayList
 
@@ -21,15 +24,25 @@ class TakeoffMagnets(@JsonIgnore override var ship: ServerShip?) : ShipForcesInd
     private val magnets = CopyOnWriteArrayList<Magnet>()
 
     override fun applyForces(physShip: PhysShip) {
-        val ship = ship as ServerShip
+        if (ship == null) return
+
+        physShip as PhysShipImpl
+        val shipPos = physShip.poseVel.pos
 
         magnets.forEach {
             val (pos, otherMagnets) = it
+            it.physShip = physShip
 
-            val tPos = it.ship.shipToWorld.transformPosition(Vector3d(pos).add(0.5, 0.5, 0.5))
+            val tPos = Vector3d(pos).add(0.5, 0.5, 0.5).sub(ship!!.transform.positionInShip)
+            SegmentUtils.transformPos(physShip.poseVel, physShip.segments.segments.values.first().segmentDisplacement, tPos, tPos)
 
             otherMagnets.forEach { other ->
-                val tPosOther = other.ship.shipToWorld.transformPosition(Vector3d(other.pos).add(0.5, 0.5, 0.5))
+                if (other.physShip == null) return@forEach
+
+                val oPhysShip = other.physShip as PhysShipImpl
+
+                val tPosOther = Vector3d(other.pos).add(0.5, 0.5, 0.5).sub(other!!.ship!!.transform.positionInShip)
+                SegmentUtils.transformPos(oPhysShip.poseVel, oPhysShip.segments.segments.values.first().segmentDisplacement, tPosOther, tPosOther)
 
                 var dist = tPosOther.distanceSquared(tPos)
                 if (dist > MAGNET_DISTANCE) return
@@ -41,7 +54,7 @@ class TakeoffMagnets(@JsonIgnore override var ship: ServerShip?) : ShipForcesInd
 
                 val force = Vector3d(tPos).sub(tPosOther).normalize(-power)
 
-                physShip.applyInvariantForceToPos(force, Vector3d(tPos).sub(ship.transform.positionInWorld))
+                physShip.applyInvariantForceToPos(force, Vector3d(tPos).sub(shipPos))
             }
         }
     }
@@ -74,7 +87,8 @@ class TakeoffMagnets(@JsonIgnore override var ship: ServerShip?) : ShipForcesInd
         @JsonIgnore var otherMagnets: List<Magnet> = mutableListOf(),
         val north: Boolean,
         @JsonIgnore var lastWorldPos: Vector3d = Vector3d(),
-        val ship: ServerShip
+        @JsonIgnore var ship: ServerShip? = null,
+        @JsonIgnore var physShip: PhysShip? = null
     )
 
     override fun tick() {
@@ -82,7 +96,7 @@ class TakeoffMagnets(@JsonIgnore override var ship: ServerShip?) : ShipForcesInd
             it.lastWorldPos = ship!!.shipToWorld.transformPosition(Vector3d(it.pos).add(0.5, 0.5, 0.5))
             val otherMagnets = mutableListOf<Magnet>()
             for (magnet in allMagnets) {
-                if (magnet.ship.id != this.ship!!.id && (magnet.lastWorldPos.distanceSquared(it.lastWorldPos) < MAGNET_DISTANCE)) {
+                if (magnet.ship != null && magnet.ship!!.id != this.ship!!.id && (magnet.lastWorldPos.distanceSquared(it.lastWorldPos) < MAGNET_DISTANCE)) {
                     otherMagnets.add(magnet)
                 }
             }

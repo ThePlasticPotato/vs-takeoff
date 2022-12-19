@@ -18,6 +18,7 @@ import org.valkyrienskies.core.impl.game.ships.PhysShipImpl
 import org.valkyrienskies.core.impl.pipelines.SegmentUtils
 import net.takeoff.TakeoffConfig
 import org.joml.*
+import org.valkyrienskies.core.impl.util.y
 import org.valkyrienskies.mod.common.util.toJOML
 import org.valkyrienskies.mod.common.util.toJOMLD
 import kotlin.math.*
@@ -51,6 +52,7 @@ class TakeoffShipControl : ShipForcesInducer, ServerShipUser, Ticked {
     )
 
     override fun applyForces(physShip: PhysShip) {
+        if (ship == null) return
 
         val forcesApplier = physShip
 
@@ -105,10 +107,14 @@ class TakeoffShipControl : ShipForcesInducer, ServerShipUser, Ticked {
 //        totalloc.x = totalloc.x/balloons
 //        totalloc.y = totalloc.y/balloons
 //        totalloc.div = totalloc.z/balloons
-        val shipCoords = Vector3d(ship?.transform?.positionInShip)
-        val shipCoordsinworld = Vector3d(ship?.transform?.positionInWorld)
+
+        physShip as PhysShipImpl
+        val shipCoordsinworld: Vector3dc = physShip.poseVel.pos
+
+        val shipCoords = ship!!.transform.positionInShip
         var falloffamount = 0.0
         var falloff = 1.0
+
         if (shipCoordsinworld.y > 256) {
             falloffamount = shipCoordsinworld.y - 256
             falloff = falloffamount*(1.5)
@@ -117,7 +123,7 @@ class TakeoffShipControl : ShipForcesInducer, ServerShipUser, Ticked {
             falloff = 1.0
         }
         val actualUpwardForce = Vector3d(0.0, (5000.0/falloff), 0.0)
-        balloonpos.forEach() {
+        balloonpos.forEach {
             if (actualUpwardForce.isFinite) {
                 forcesApplier.applyInvariantForceToPos(actualUpwardForce, Vector3d(it).sub(shipCoords))
 //                println("APPLIED AT " + it.sub(shipCoords).toString())
@@ -247,14 +253,17 @@ class TakeoffShipControl : ShipForcesInducer, ServerShipUser, Ticked {
         farters.forEach {
             val (pos, dir) = it
 
-            val tPos = ship?.shipToWorld?.transformPosition(Vector3d(pos))?.add(0.5,0.5,0.5)?.sub(shipCoordsinworld)
-            val tDir = ship?.shipToWorld?.transformDirection(dir.normal.toJOMLD(), Vector3d())
-            tDir?.normalize(-10000.0)
+            val tPos = Vector3d(pos).add( 0.5, 0.5, 0.5).sub(ship!!.transform.positionInShip)
+
+            SegmentUtils.transformPos(physShip.poseVel,
+                physShip.segments.segments.values.first().segmentDisplacement,
+                tPos, tPos)
+
+            tPos.sub(shipCoordsinworld)
 //
 
-            if (tDir?.isFinite == true && tPos != null) {
-                physShip.applyInvariantForceToPos(tDir, tPos)
-//                forcesApplier.applyRotDependentForceToPos()
+            if (tPos != null && tPos.isFinite) {
+                physShip.applyRotDependentForceToPos(dir.normal.toJOMLD().mul(-10000.0), tPos)
             }
         }
     }
