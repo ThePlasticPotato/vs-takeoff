@@ -36,6 +36,8 @@ class TakeoffMagnets(@JsonIgnore override var ship: ServerShip?) : ShipForcesInd
             val tPos = Vector3d(pos).add(0.5, 0.5, 0.5).sub(ship!!.transform.positionInShip)
             SegmentUtils.transformPos(physShip.poseVel, physShip.segments.segments.values.first().segmentDisplacement, tPos, tPos)
 
+
+            val fieldx =
             otherMagnets.forEach { other ->
                 if (other.physShip == null) return@forEach
 
