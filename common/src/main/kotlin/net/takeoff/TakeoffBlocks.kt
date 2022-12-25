@@ -23,6 +23,8 @@ object TakeoffBlocks {
 //    val FLOATER = BLOCKS.register("floater", ::FloaterBlock)
     val WING = BLOCKS.register("wing", ::WingBlock)
     val FARTER = BLOCKS.register("farter", ::FartBlock)
+    val BEARING = BLOCKS.register("bearing", ::BearingBaseBlock)
+    val BEARING_TOP = BLOCKS.register("bearing_top", ::BearingTopBlock)
 
     val NORTH_MAGNET = BLOCKS.register("nmagnet") { MagnetBlock(true) }
     val SOUTH_MAGNET = BLOCKS.register("smagnet") { MagnetBlock(false) }

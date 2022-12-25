@@ -5,7 +5,6 @@ import org.valkyrienskies.core.impl.config.VSConfigClass
 
 object TakeoffMod {
     const val MOD_ID = "vs_takeoff"
-    private var isTick1 = false
 
     @JvmStatic
     fun init() {

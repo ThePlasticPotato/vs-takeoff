@@ -8,6 +8,7 @@ import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.state.BlockState
+import net.takeoff.blockentity.BearingBlockEntity
 import net.takeoff.blockentity.FartBlockEntity
 import net.takeoff.registry.DeferredRegister
 import net.takeoff.registry.RegistrySupplier
@@ -30,6 +31,7 @@ object TakeoffBlockEntities {
 //    val ENGINE = TakeoffBlocks.ENGINE withBE ::EngineBlockEntity byName "engine"
 
     val FARTER = TakeoffBlocks.FARTER withBE ::FartBlockEntity byName "farter"
+    val BEARING = TakeoffBlocks.BEARING withBE ::BearingBlockEntity byName "bearing"
 
     fun register() {
         BLOCKENTITIES.applyAll()

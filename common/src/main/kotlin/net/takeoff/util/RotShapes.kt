@@ -10,22 +10,42 @@ interface RotShape {
     fun rotate90(): RotShape
     fun rotate180(): RotShape = rotate90().rotate90()
     fun rotate270(): RotShape = rotate180().rotate90()
+
+    fun xrotate90(): RotShape
+
+    fun xrotate180(): RotShape = xrotate90().xrotate90()
+
+    fun xrotate270(): RotShape = xrotate180().xrotate90()
+
     fun makeMcShape(): VoxelShape
     fun build(): VoxelShape = makeMcShape().optimize()
 }
 
-class DirectionalShape(shape: RotShape) {
+class DirectionalShape private constructor(shape: RotShape) {
     val north = shape.build()
     val east = shape.rotate90().build()
     val south = shape.rotate180().build()
     val west = shape.rotate270().build()
+    val up = shape.xrotate90().build()
+    val down = shape.xrotate270().build()
 
     operator fun get(direction: Direction): VoxelShape = when (direction) {
         Direction.NORTH -> north
         Direction.EAST -> east
         Direction.SOUTH -> south
         Direction.WEST -> west
+        Direction.UP -> up
+        Direction.DOWN -> down
         else -> throw IllegalArgumentException()
+    }
+
+    companion object {
+        fun north(shape: RotShape) = DirectionalShape(shape)
+        fun east(shape: RotShape) = DirectionalShape(shape.rotate270())
+        fun south(shape: RotShape) = DirectionalShape(shape.rotate180())
+        fun west(shape: RotShape) = DirectionalShape(shape.rotate90())
+        fun up(shape: RotShape) = DirectionalShape(shape.xrotate270())
+        fun down(shape: RotShape) = DirectionalShape(shape.xrotate90())
     }
 }
 
@@ -38,6 +58,7 @@ object RotShapes {
     private class Box(val x1: Double, val y1: Double, val z1: Double, val x2: Double, val y2: Double, val z2: Double) :
         RotShape {
         override fun rotate90(): RotShape = Box(16 - z1, y1, x1, 16 - z2, y2, x2)
+        override fun xrotate90(): RotShape = Box(x1, 16 - z1, y1, x2, 16 - z2, y2)
 
         override fun makeMcShape(): VoxelShape = Shapes.box(
             min(x1, x2) / 16,
@@ -50,7 +71,7 @@ object RotShapes {
 
     private class Union(val shapes: List<RotShape>) : RotShape {
         override fun rotate90(): RotShape = Union(shapes.map { it.rotate90() })
-
+        override fun xrotate90(): RotShape = Union(shapes.map { it.xrotate90() })
         override fun makeMcShape(): VoxelShape = shapes.fold(Shapes.empty()) { mc, n -> Shapes.or(mc, n.makeMcShape()) }
     }
 }

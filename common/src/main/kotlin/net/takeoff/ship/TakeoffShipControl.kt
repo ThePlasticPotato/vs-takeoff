@@ -255,14 +255,7 @@ class TakeoffShipControl : ShipForcesInducer, ServerShipUser, Ticked {
 
             val tPos = Vector3d(pos).add( 0.5, 0.5, 0.5).sub(ship!!.transform.positionInShip)
 
-            SegmentUtils.transformPos(physShip.poseVel,
-                physShip.segments.segments.values.first().segmentDisplacement,
-                tPos, tPos)
-
-            tPos.sub(shipCoordsinworld)
-//
-
-            if (tPos != null && tPos.isFinite) {
+            if (tPos.isFinite) {
                 physShip.applyRotDependentForceToPos(dir.normal.toJOMLD().mul(-10000.0), tPos)
             }
         }

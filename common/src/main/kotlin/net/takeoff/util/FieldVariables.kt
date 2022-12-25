@@ -12,7 +12,7 @@ object FieldVariables {
 
     val permea: Double = 1/(4*Math.PI)
 
-
+/*
     fun solvethisshitforme(n: Vector3dc, xr: Double, yr: Double, zr: Double, zprime: Double): Double {
         var norm = Vector3d(n)
         var x : Double
@@ -92,4 +92,5 @@ object FieldVariables {
 
         return Bx.add
     }
+    */
 }

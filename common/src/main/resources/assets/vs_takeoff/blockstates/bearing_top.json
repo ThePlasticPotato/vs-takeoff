@@ -1,0 +1,28 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "vs_takeoff:block/bearingconnection",
+      "y": 180
+    },
+    "facing=east": {
+      "model": "vs_takeoff:block/bearingconnection",
+      "y": 270
+    },
+    "facing=south": {
+      "model": "vs_takeoff:block/bearingconnection",
+      "y": 0
+    },
+    "facing=west": {
+      "model": "vs_takeoff:block/bearingconnection",
+      "y": 90
+    },
+    "facing=up": {
+      "model": "vs_takeoff:block/bearingconnection",
+      "x": 90
+    },
+    "facing=down": {
+      "model": "vs_takeoff:block/bearingconnection",
+      "x": 270
+    }
+  }
+}
