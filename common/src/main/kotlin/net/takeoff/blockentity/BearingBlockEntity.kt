@@ -15,8 +15,10 @@ import net.takeoff.TakeoffBlocks
 import org.joml.AxisAngle4d
 import org.joml.Quaterniond
 import org.joml.Vector3d
+import org.valkyrienskies.core.api.ships.ServerShip
 import org.valkyrienskies.core.apigame.constraints.VSAttachmentConstraint
 import org.valkyrienskies.core.apigame.constraints.VSHingeOrientationConstraint
+import org.valkyrienskies.core.impl.hooks.VSEvents
 import org.valkyrienskies.mod.common.dimensionId
 import org.valkyrienskies.mod.common.getShipManagingPos
 import org.valkyrienskies.mod.common.getShipObjectManagingPos
@@ -41,6 +43,22 @@ class BearingBlockEntity(pos: BlockPos, state: BlockState) : BlockEntity(Takeoff
 
         if (tag.contains("otherPos")) {
             otherPos = BlockPos.of(tag.getLong("otherPos"))
+
+            VSEvents.shipLoadEvent.on { (otherShip), handler ->
+                if (otherShip.chunkClaim.contains(otherPos!!.x / 16, otherPos!!.z / 16)) {
+                    handler.unregister()
+
+                    if (!createConstraints()) {
+                        VSEvents.shipLoadEvent.on { (ship), handler ->
+                            if (ship.chunkClaim.contains(blockPos.x / 16, blockPos.z / 16)) {
+                                handler.unregister()
+
+                                if (!createConstraints(otherShip)) throw IllegalStateException("Could not create constraints for bearing block entity!")
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -50,15 +68,6 @@ class BearingBlockEntity(pos: BlockPos, state: BlockState) : BlockEntity(Takeoff
 
         if (otherPos != null) {
             tag.putLong("otherPos", otherPos!!.asLong())
-        }
-    }
-
-    override fun setLevel(level: Level) {
-        try {
-            super.setLevel(level)
-            createConstraints()
-        } catch (e: Exception) {
-            e.printStackTrace()
         }
     }
 
@@ -124,16 +133,20 @@ class BearingBlockEntity(pos: BlockPos, state: BlockState) : BlockEntity(Takeoff
         }
 
         this.otherPos = otherAttachmentPoint
-        createConstraints()
+        createConstraints(otherShip)
     }
 
-    fun createConstraints() {
+    fun createConstraints(otherShip: ServerShip? = null): Boolean {
         if (isBase && otherPos != null && level != null
             && attachConstraintId == null && hingeConstraintId == null
             && !level!!.isClientSide) {
             val level = level as ServerLevel
-            val shipId = level.getShipManagingPos(blockPos)?.id ?: level.shipObjectWorld.dimensionToGroundBodyIdImmutable[level.dimensionId]!!
-            val otherShipId = level.getShipManagingPos(otherPos!!)?.id ?: level.shipObjectWorld.dimensionToGroundBodyIdImmutable[level.dimensionId]!!
+            val shipId = level.getShipObjectManagingPos(blockPos)?.id ?: level.shipObjectWorld.dimensionToGroundBodyIdImmutable[level.dimensionId]!!
+            val otherShipId = otherShip?.id ?: level.getShipObjectManagingPos(otherPos!!)?.id ?: level.shipObjectWorld.dimensionToGroundBodyIdImmutable[level.dimensionId]!!
+
+            // If both ships aren't loaded don't make the constraint (itl crash vs2)
+            if (level.getShipManagingPos(blockPos) != null && level.getShipManagingPos(blockPos)!!.id != shipId) return false
+            if (level.getShipManagingPos(otherPos!!) != null && level.getShipManagingPos(otherPos!!)!!.id != otherShipId) return false
 
             // Orientation
             val lookingTowards = blockState.getValue(BlockStateProperties.FACING).normal.toJOMLD()
@@ -162,11 +175,14 @@ class BearingBlockEntity(pos: BlockPos, state: BlockState) : BlockEntity(Takeoff
 
             hingeConstraintId = level.shipObjectWorld.createNewConstraint(hingeConstraint)
             attachConstraintId = level.shipObjectWorld.createNewConstraint(attachmentConstraint)
+            return true
         }
+
+        return false
     }
 
     fun destroyConstraints() {
-        if (level != null && !level!!.isClientSide) {
+        if (level?.shipObjectWorld != null && !level!!.isClientSide) {
             val level = level as ServerLevel
             hingeConstraintId?.let { level.shipObjectWorld.removeConstraint(it) }
             attachConstraintId?.let { level.shipObjectWorld.removeConstraint(it) }
