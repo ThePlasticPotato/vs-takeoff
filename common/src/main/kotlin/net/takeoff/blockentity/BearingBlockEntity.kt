@@ -97,8 +97,13 @@ class BearingBlockEntity(pos: BlockPos, state: BlockState) : BlockEntity(Takeoff
                 null), false)
 
         val (otherAttachmentPoint, otherShip) = if (clipResult.type == HitResult.Type.MISS) {
+            val inWorldPos = blockPos.toJOMLD().let {
+                ship?.shipToWorld?.transformPosition(it) ?: it
+            }
+            val inWorldBlockPos = BlockPos(inWorldPos.x, inWorldPos.y, inWorldPos.z)
+
             val otherShip = level.shipObjectWorld.createNewShipAtBlock(
-                blockPos.offset(blockState.getValue(BlockStateProperties.FACING).normal).toJOML(),
+                inWorldBlockPos.offset(blockState.getValue(BlockStateProperties.FACING).normal).toJOML(),
                 false,
                 ship?.transform?.shipToWorldScaling?.x() ?: 1.0,
                 level.dimensionId
@@ -209,7 +214,7 @@ class BearingBlockEntity(pos: BlockPos, state: BlockState) : BlockEntity(Takeoff
 
     companion object {
         private val baseOffset = 0.2
-        private val constraintComplience = 1e-8
+        private val constraintComplience = 1e-10
         private val maxForce = 1e10
     }
 }
