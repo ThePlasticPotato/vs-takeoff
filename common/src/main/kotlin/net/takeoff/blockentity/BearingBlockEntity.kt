@@ -213,7 +213,7 @@ class BearingBlockEntity(pos: BlockPos, state: BlockState) : BlockEntity(Takeoff
     }
 
     companion object {
-        private val baseOffset = 0.2
+        private val baseOffset = 0.0
         private val constraintComplience = 1e-10
         private val maxForce = 1e10
     }
