@@ -25,25 +25,27 @@ class TakeoffWings(@JsonIgnore override var ship: ServerShip?) : ShipForcesInduc
 
     override fun applyForces(physShip: PhysShip) {
         val ship = ship as ServerShip
-        val forcesApplier = physShip
         wings.forEach {
             val (pos, dir) = it
 
 
 
-            val tPos = ship.shipToWorld.transformPosition(Vector3d(pos).add(0.5, 0.5, 0.5))
-            val tDir = ship.shipToWorld.transformDirection(dir.normal.toJOMLD(), Vector3d())
+            val tPos = Vector3d(pos).add( 0.5, 0.5, 0.5).sub(ship.transform.positionInShip)
+            val tDir = ship.shipToWorld.transformDirection(dir.normal.toJOMLD())
 
-                val currentVelocityOfPos = Vector3d(tPos)
+
+            val currentVelocityOfPos = Vector3d(tPos)
                 .sub(ship.transform.positionInWorld)
                 .cross(ship.omega)
                 .add(ship.velocity)
 
-            //println(currentVelocityOfPos)
+            var RotForce = currentVelocityOfPos.dot(tDir)
+            println(RotForce)
+            println(currentVelocityOfPos.length())
 
             //tDir.normalize(1000.0)
 
-            forcesApplier.applyInvariantForceToPos(tDir, tPos)
+            //physShip.applyInvariantForceToPos(tDir, tPos)
         }
     }
 

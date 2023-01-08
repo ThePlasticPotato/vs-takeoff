@@ -1,5 +1,25 @@
 {
   "block.vs_takeoff.balloon": "Balloon",
+  "block.vs_takeoff.black_balloon": "Black Balloon",
+  "block.vs_takeoff.blue_balloon": "Blue Balloon",
+  "block.vs_takeoff.brown_balloon": "Brown Balloon",
+  "block.vs_takeoff.cyan_balloon": "Cyan Balloon",
+  "block.vs_takeoff.green_balloon": "Green Balloon",
+  "block.vs_takeoff.grey_balloon": "Gray Balloon",
+  "block.vs_takeoff.light_blue_balloon": "Light-Blue Balloon",
+  "block.vs_takeoff.light_grey_balloon": "Light-Gray Balloon",
+  "block.vs_takeoff.lime_balloon": "Lime Balloon",
+  "block.vs_takeoff.magenta_balloon": "Magenta Balloon",
+  "block.vs_takeoff.orange_balloon": "Orange Balloon",
+  "block.vs_takeoff.pink_balloon": "Pink Balloon",
+  "block.vs_takeoff.purple_balloon": "Purple Balloon",
+  "block.vs_takeoff.red_balloon": "Red Balloon",
+  "block.vs_takeoff.white_balloon": "White Balloon",
+  "block.vs_takeoff.yellow_balloon": "Yellow Balloon",
+
+  "block.vs_takeoff.bearing": "bearing",
+  "block.vs_takeoff.bearing_top": "Bearing Top",
+
   "block.vs_takeoff.farter": "Farter",
   "block.vs_takeoff.wing": "Wing"
 }

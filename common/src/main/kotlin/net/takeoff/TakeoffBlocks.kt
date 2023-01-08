@@ -40,12 +40,12 @@ object TakeoffBlocks {
             BlockBehaviour.Properties.of(Material.WOOL, MaterialColor.SNOW).sound(SoundType.WOOL)
         )
     }
-    val LIGHT_GRAY_BALLOON = BLOCKS.register("light_gray_balloon") {
+    val LIGHT_GRAY_BALLOON = BLOCKS.register("light_grey_balloon") {
         BalloonBlock(
             BlockBehaviour.Properties.of(Material.WOOL, MaterialColor.COLOR_LIGHT_GRAY).sound(SoundType.WOOL)
         )
     }
-    val GRAY_BALLOON = BLOCKS.register("gray_balloon") {
+    val GRAY_BALLOON = BLOCKS.register("grey_balloon") {
         BalloonBlock(
             BlockBehaviour.Properties.of(Material.WOOL, MaterialColor.COLOR_GRAY).sound(SoundType.WOOL)
         )

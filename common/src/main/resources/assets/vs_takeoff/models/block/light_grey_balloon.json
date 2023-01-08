@@ -3,8 +3,8 @@
 	"parent": "block",
 	"texture_size": [64, 64],
 	"textures": {
-		"2": "vs_takeoff:/balloon",
-		"particle": "vs_takeoff:/balloon"
+		"2": "vs_takeoff:/light_grey_balloon",
+		"particle": "vs_takeoff:/light_grey_balloon"
 	},
 	"elements": [
 		{
