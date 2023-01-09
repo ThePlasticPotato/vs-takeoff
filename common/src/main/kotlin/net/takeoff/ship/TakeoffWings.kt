@@ -12,6 +12,8 @@ import org.valkyrienskies.core.impl.api.ServerShipUser
 import org.valkyrienskies.core.impl.api.ShipForcesInducer
 import org.valkyrienskies.mod.common.util.toJOML
 import org.valkyrienskies.mod.common.util.toJOMLD
+import kotlin.math.absoluteValue
+import kotlin.math.atan2
 
 @JsonAutoDetect(
     fieldVisibility = JsonAutoDetect.Visibility.ANY,
@@ -28,26 +30,24 @@ class TakeoffWings(@JsonIgnore override var ship: ServerShip?) : ShipForcesInduc
         wings.forEach {
             val (pos, dir) = it
 
-
+            val angularDrag = 0.5;
+            val Drag = 0.1;
 
             val tPos = Vector3d(pos).add( 0.5, 0.5, 0.5).sub(ship.transform.positionInShip)
             val tDir = ship.shipToWorld.transformDirection(dir.normal.toJOMLD())
 
-
-            val currentVelocityOfPos = Vector3d(tPos)
+            val currentPosVelocityOfPos = Vector3d(tPos)
                 .sub(ship.transform.positionInWorld)
                 .cross(ship.omega)
                 .add(ship.velocity)
 
-            var RotForce = currentVelocityOfPos.dot(tDir)
-            println(RotForce)
-            println(currentVelocityOfPos.length())
+            /* Angular Drag */
+            var dragTorque: Vector3dc = Vector3d(0.0, 1.0, 1.0).mul(ship.inertiaData.momentOfInertiaTensor.transform(ship.omega.mul(-angularDrag, Vector3d())))
 
-            //tDir.normalize(1000.0)
-
-            //physShip.applyInvariantForceToPos(tDir, tPos)
+            println(dragTorque)
         }
     }
+
 
     fun addWing(pos: BlockPos, dir: Direction) {
         wings.add(pos.toJOML() to dir)

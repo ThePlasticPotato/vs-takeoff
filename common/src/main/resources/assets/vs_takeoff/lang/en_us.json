@@ -1,4 +1,6 @@
 {
+  "itemGroup.vs_takeoff.takeoff_tab": "VS Takeoff",
+
   "block.vs_takeoff.balloon": "Balloon",
   "block.vs_takeoff.black_balloon": "Black Balloon",
   "block.vs_takeoff.blue_balloon": "Blue Balloon",

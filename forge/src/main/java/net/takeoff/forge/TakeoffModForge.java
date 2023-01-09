@@ -6,23 +6,12 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.ConfigGuiHandler;
-import net.minecraftforge.client.event.EntityRenderersEvent;
-import net.minecraftforge.client.event.ModelRegistryEvent;
-import net.minecraftforge.client.model.ForgeModelBakery;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.valkyrienskies.core.impl.config.VSConfigClass;
-import net.takeoff.TakeoffBlockEntities;
 import net.takeoff.TakeoffConfig;
-import net.takeoff.TakeoffMod;
-//import net.takeoff.block.WoodType;
-//import net.takeoff.blockentity.renderer.ShipHelmBlockEntityRenderer;
-//import net.takeoff.blockentity.renderer.WheelModels;
 import org.valkyrienskies.mod.compat.clothconfig.VSClothConfig;
 
 @Mod(TakeoffMod.MOD_ID)
