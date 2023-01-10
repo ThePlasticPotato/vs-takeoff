@@ -43,11 +43,11 @@ class TakeoffWings(@JsonIgnore override var ship: ServerShip?) : ShipForcesInduc
             val tDir: Vector3dc = ship.shipToWorld.transformPosition(localPos, Vector3d()).sub(ship.transform.positionInWorld)
 
             // Velocity at the block position, in global coordinates
-            val velAtWingGlobal: Vector3dc = (Vector3d(tDir).cross(ship.omega)).add(ship.velocity)
+            val velAtWingGlobal: Vector3dc = (Vector3d(ship.omega).cross(tDir)).add(ship.velocity)
 
             val wingNormalGlobal: Vector3dc = ship.shipToWorld.transformDirection(wingNormalLocal, Vector3d())
             val liftVel: Vector3dc = velAtWingGlobal.sub(Vector3d(wingNormalGlobal).mul(wingNormalGlobal.dot(velAtWingGlobal)), Vector3d())
-            val liftVelDirection: Vector3dc = velAtWingGlobal.sub(Vector3d(wingNormalGlobal).mul(wingNormalGlobal.dot(velAtWingGlobal)), Vector3d()).mul(-1.0)
+            val liftVelDirection: Vector3dc = Vector3d(liftVel).normalize()
 
             if (liftVelDirection.lengthSquared() > 1e-12) {
                 // Angle of attack, in radians
@@ -73,7 +73,8 @@ class TakeoffWings(@JsonIgnore override var ship: ServerShip?) : ShipForcesInduc
                 val localForce = ship.worldToShip.transformDirection(totalForce, Vector3d())
                 val localPos2 = ship.worldToShip.transformDirection(tDir, Vector3d())
 
-                physShip.applyRotDependentForceToPos(localForce, tDir)
+                val tPos = Vector3d(pos).add( 0.5, 0.5, 0.5).sub(ship!!.transform.positionInShip)
+                physShip.applyRotDependentForceToPos(localForce, tPos)
             } else {
                 // TODO: Do nothing?
             }
