@@ -77,8 +77,8 @@ class TakeoffWings(@JsonIgnore override var ship: ServerShip?) : ShipForcesInduc
 
 
                 // TODO: Need to compute [dragCoefficient] more effectively
-                val dragCoefficient = 1.0 - cos(2.0 * angleOfAttack) // liftCoefficient * liftCoefficient
-                val dragForceMagnitude = 150.0 * dragCoefficient * velAtWingGlobal.lengthSquared()
+                val dragCoefficient = 1.0 // liftCoefficient * liftCoefficient
+                val dragForceMagnitude = 150.0 * dragCoefficient * velAtWingGlobal.length()
                 val dragForceVector: Vector3dc = dragDirection.mul(dragForceMagnitude, Vector3d())
 
                 val totalForce: Vector3dc = liftForceVector.add(dragForceVector, Vector3d())
@@ -106,11 +106,11 @@ class TakeoffWings(@JsonIgnore override var ship: ServerShip?) : ShipForcesInduc
         }
 
         if (netShipTorque.lengthSquared() > 1e13) {
-            return
+            // return
         }
 
         if (netShipTorque.lengthSquared() > 1e16) {
-            val j = 1
+            // val k = 1
         }
 
         physShip.applyInvariantTorque(netShipTorque)
