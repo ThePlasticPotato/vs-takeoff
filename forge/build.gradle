@@ -57,6 +57,8 @@ dependencies {
     forge "net.minecraftforge:forge:${rootProject.forge_version}"
     modApi("org.valkyrienskies:valkyrienskies-118-forge:${rootProject.vs2_version}") { transitive = false }
     implementation("org.valkyrienskies.core:api:1.1.0+854f172484") { transitive = false }
+    modApi("org.valkyrienskies.eureka:eureka-forge:${rootProject.eureka_version}") { transitive = false }
+
 //    implementation("com.simibubi.create:create-${create_minecraft_version}:${create_version}:slim") { transitive = false }
 //    implementation("com.jozufozu.flywheel:flywheel-forge-${flywheel_minecraft_version}:${flywheel_version}")
 //    implementation("com.tterrag.registrate:Registrate:${registrate_version}")
