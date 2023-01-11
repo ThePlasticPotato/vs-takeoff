@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect
 import com.fasterxml.jackson.annotation.JsonIgnore
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
+import org.joml.Matrix3d
+import org.joml.Quaterniond
 import org.joml.Vector3d
 import org.joml.Vector3dc
 import org.joml.Vector3i
@@ -16,7 +18,7 @@ import org.valkyrienskies.core.impl.api.ShipForcesInducer
 import org.valkyrienskies.mod.common.util.toJOML
 import org.valkyrienskies.mod.common.util.toJOMLD
 import java.util.Collections
-import kotlin.math.cos
+import kotlin.math.PI
 import kotlin.math.min
 import kotlin.math.sign
 import kotlin.math.sin
@@ -88,29 +90,32 @@ class TakeoffWings(@JsonIgnore override var ship: ServerShip?) : ShipForcesInduc
                     return@forEach
                 }
 
-                val localForce = ship.worldToShip.transformDirection(totalForce, Vector3d())
-                val localPos2 = ship.worldToShip.transformDirection(tDir, Vector3d())
+                // val localForce = ship.worldToShip.transformDirection(totalForce, Vector3d())
+                // val localPos2 = ship.worldToShip.transformDirection(tDir, Vector3d())
 
-                val tPos: Vector3dc = Vector3d(pos).add( 0.5, 0.5, 0.5).sub(ship!!.transform.positionInShip)
+                // val tPos: Vector3dc = Vector3d(pos).add( 0.5, 0.5, 0.5).sub(ship!!.transform.positionInShip)
                 // physShip.applyRotDependentForceToPos(localForce, tPos)
 
                 val torque = tDir.cross(totalForce, Vector3d())
 
                 netShipTorque.add(torque)
                 netShipForce.add(totalForce)
-//                physShip.applyInvariantTorque(torque)
-//                physShip.applyInvariantForce(totalForce)
+                // physShip.applyInvariantTorque(torque)
+                // physShip.applyInvariantForce(totalForce)
             } else {
                 // TODO: Do nothing?
             }
         }
 
-        if (netShipTorque.lengthSquared() > 1e13) {
-            // return
-        }
+        val momentOfInertiaInWorld = Matrix3d().rotate(ship.shipToWorld.getNormalizedRotation(Quaterniond())).mul(ship.inertiaData.momentOfInertiaTensor)
+        val invMOI = momentOfInertiaInWorld.invert()
 
-        if (netShipTorque.lengthSquared() > 1e16) {
-            // val k = 1
+        val deltaOmega = invMOI.transform(netShipTorque, Vector3d())
+
+        val maxRotation = 4.0 * PI
+        // Clamp the rotation from [netShipTorque] to be up to 720 degrees per second
+        if (deltaOmega.length() > maxRotation) {
+            netShipTorque.mul(maxRotation / deltaOmega.length())
         }
 
         physShip.applyInvariantTorque(netShipTorque)
