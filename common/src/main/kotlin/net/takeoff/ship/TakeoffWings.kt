@@ -4,21 +4,21 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect
 import com.fasterxml.jackson.annotation.JsonIgnore
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
-import org.joml.AxisAngle4d
-import org.joml.Quaterniond
-import org.joml.Quaterniondc
 import org.joml.Vector3d
 import org.joml.Vector3dc
 import org.joml.Vector3i
-import org.valkyrienskies.core.api.ships.*
+import org.valkyrienskies.core.api.ships.PhysShip
+import org.valkyrienskies.core.api.ships.ServerShip
+import org.valkyrienskies.core.api.ships.getAttachment
+import org.valkyrienskies.core.api.ships.saveAttachment
 import org.valkyrienskies.core.impl.api.ServerShipUser
 import org.valkyrienskies.core.impl.api.ShipForcesInducer
 import org.valkyrienskies.mod.common.util.toJOML
 import org.valkyrienskies.mod.common.util.toJOMLD
-import kotlin.math.abs
-import kotlin.math.absoluteValue
-import kotlin.math.atan2
+import java.util.Collections
 import kotlin.math.cos
+import kotlin.math.min
+import kotlin.math.sign
 import kotlin.math.sin
 
 @JsonAutoDetect(
@@ -29,10 +29,14 @@ import kotlin.math.sin
 )
 
 class TakeoffWings(@JsonIgnore override var ship: ServerShip?) : ShipForcesInducer, ServerShipUser {
-    private val wings = mutableListOf<Pair<Vector3i, Direction>>()
+    private val wings: MutableList<Pair<Vector3i, Direction>> = Collections.synchronizedList(ArrayList())
 
     override fun applyForces(physShip: PhysShip) {
         val ship = ship as ServerShip
+
+        val netShipForce = Vector3d()
+        val netShipTorque = Vector3d()
+
         wings.forEach {
             val (pos, wingDirection) = it
 
@@ -47,38 +51,70 @@ class TakeoffWings(@JsonIgnore override var ship: ServerShip?) : ShipForcesInduc
 
             val wingNormalGlobal: Vector3dc = ship.shipToWorld.transformDirection(wingNormalLocal, Vector3d())
             val liftVel: Vector3dc = velAtWingGlobal.sub(Vector3d(wingNormalGlobal).mul(wingNormalGlobal.dot(velAtWingGlobal)), Vector3d())
-            val liftVelDirection: Vector3dc = Vector3d(liftVel).normalize()
 
-            if (liftVelDirection.lengthSquared() > 1e-12) {
+            if (liftVel.lengthSquared() > 1e-12) {
+                val liftVelDirection: Vector3dc = Vector3d(liftVel).normalize()
                 // Angle of attack, in radians
                 val angleOfAttack = liftVelDirection.angle(velAtWingGlobal)
 
+                // println("angleOfAttack is $angleOfAttack")
 
-                val dragDirection = velAtWingGlobal.mul(-1.0, Vector3d()).normalize()
+                val dragDirection = velAtWingGlobal.mul(-1.0, Vector3d())
+                if (dragDirection.lengthSquared() < 1e-12) {
+                    // Don't normalize, give up
+                    return@forEach
+                }
+                dragDirection.normalize()
+                dragDirection as Vector3dc
                 // val liftVel = velAtWingGlobal.dot(liftVelDirection)
 
                 val liftPower = 150.0
                 val liftCoefficient = sin(2.0 * angleOfAttack)
-                val liftForceMagnitude = liftPower * liftCoefficient * liftVel.lengthSquared()
-                val liftForceVector: Vector3dc = wingNormalGlobal.mul(liftForceMagnitude, Vector3d())
+                val liftForceMagnitude = min(liftPower * liftCoefficient * liftVel.lengthSquared(), 1e7)
+                // Account for the direction of the wind relative to the wing normal
+                val liftForceDirection = -sign(wingNormalGlobal.dot(velAtWingGlobal))
+                val liftForceVector: Vector3dc = wingNormalGlobal.mul(liftForceDirection * liftForceMagnitude, Vector3d())
 
 
                 // TODO: Need to compute [dragCoefficient] more effectively
-                val dragCoefficient = liftCoefficient * liftCoefficient
-                val dragForceMagnitude = 150.0 * dragCoefficient * liftVel.lengthSquared()
+                val dragCoefficient = 1.0 - cos(2.0 * angleOfAttack) // liftCoefficient * liftCoefficient
+                val dragForceMagnitude = 150.0 * dragCoefficient * velAtWingGlobal.lengthSquared()
                 val dragForceVector: Vector3dc = dragDirection.mul(dragForceMagnitude, Vector3d())
 
                 val totalForce: Vector3dc = liftForceVector.add(dragForceVector, Vector3d())
 
+                if (totalForce.lengthSquared() > 1e16) {
+                    // Don't apply it
+                    return@forEach
+                }
+
                 val localForce = ship.worldToShip.transformDirection(totalForce, Vector3d())
                 val localPos2 = ship.worldToShip.transformDirection(tDir, Vector3d())
 
-                val tPos = Vector3d(pos).add( 0.5, 0.5, 0.5).sub(ship!!.transform.positionInShip)
-                physShip.applyRotDependentForceToPos(localForce, tPos)
+                val tPos: Vector3dc = Vector3d(pos).add( 0.5, 0.5, 0.5).sub(ship!!.transform.positionInShip)
+                // physShip.applyRotDependentForceToPos(localForce, tPos)
+
+                val torque = tDir.cross(totalForce, Vector3d())
+
+                netShipTorque.add(torque)
+                netShipForce.add(totalForce)
+//                physShip.applyInvariantTorque(torque)
+//                physShip.applyInvariantForce(totalForce)
             } else {
                 // TODO: Do nothing?
             }
         }
+
+        if (netShipTorque.lengthSquared() > 1e13) {
+            return
+        }
+
+        if (netShipTorque.lengthSquared() > 1e16) {
+            val j = 1
+        }
+
+        physShip.applyInvariantTorque(netShipTorque)
+        physShip.applyInvariantForce(netShipForce)
     }
 
 
