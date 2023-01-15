@@ -21,7 +21,7 @@ object TakeoffBlocks {
 //    val ANCHOR = BLOCKS.register("anchor", ::AnchorBlock)
 //    val ENGINE = BLOCKS.register("engine", ::EngineBlock)
 //    val FLOATER = BLOCKS.register("floater", ::FloaterBlock)
-    val WING = BLOCKS.register("wing", ::WingBlock)
+    // val WING = BLOCKS.register("wing", ::WingBlock)
     val FARTER = BLOCKS.register("farter", ::FartBlock)
     val BEARING = BLOCKS.register("bearing", ::BearingBaseBlock)
     val BEARING_TOP = BLOCKS.register("bearing_top", ::BearingTopBlock)
