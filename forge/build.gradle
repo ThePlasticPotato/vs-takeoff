@@ -123,7 +123,7 @@ publishing {
             println "Publishing to Github Packages"
             maven {
                 name = "GitHubPackages"
-                url = uri("https://maven.pkg.github.com/ValkyrienSkies/Eureka")
+                url = uri("https://maven.pkg.github.com/ThePlasticPotato/vs-takeoff")
                 credentials {
                     username = System.getenv("GITHUB_ACTOR")
                     password = System.getenv("GITHUB_TOKEN")
