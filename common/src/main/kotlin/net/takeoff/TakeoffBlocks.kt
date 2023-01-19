@@ -12,7 +12,7 @@ import net.minecraft.world.level.material.Material
 import net.minecraft.world.level.material.MaterialColor
 import net.takeoff.block.*
 import net.takeoff.registry.DeferredRegister
-import org.valkyrienskies.mod.event.RegistryEvents
+import org.valkyrienskies.mod.common.hooks.VSGameEvents
 
 @Suppress("unused")
 object TakeoffBlocks {
@@ -120,7 +120,7 @@ object TakeoffBlocks {
     fun register() {
         BLOCKS.applyAll()
 
-        RegistryEvents.onRegistriesComplete {
+        VSGameEvents.registriesCompleted.on { _, _ ->
             makeFlammables()
         }
     }
