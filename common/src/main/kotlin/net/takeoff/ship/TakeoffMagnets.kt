@@ -7,15 +7,9 @@ import net.minecraft.core.BlockPos
 import org.joml.Vector3d
 import org.joml.Vector3dc
 import org.joml.Vector3i
-import org.valkyrienskies.core.api.ships.PhysShip
-import org.valkyrienskies.core.api.ships.ServerShip
-import org.valkyrienskies.core.api.ships.getAttachment
-import org.valkyrienskies.core.api.ships.saveAttachment
+import org.valkyrienskies.core.api.ships.*
 import org.valkyrienskies.core.impl.api.ServerShipUser
-import org.valkyrienskies.core.impl.api.ShipForcesInducer
-import org.valkyrienskies.core.impl.api.Ticked
 import org.valkyrienskies.core.impl.game.ships.PhysShipImpl
-import org.valkyrienskies.core.impl.pipelines.SegmentUtils
 import org.valkyrienskies.mod.common.util.toJOML
 import java.util.concurrent.CopyOnWriteArrayList
 
@@ -27,7 +21,7 @@ class TakeoffMagnets(@JsonIgnore override var ship: ServerShip?) : ShipForcesInd
         if (ship == null) return
 
         physShip as PhysShipImpl
-        val shipPos = physShip.poseVel.pos
+        val shipPos = physShip.transform.positionInWorld
 
         magnets.forEach {
             val (pos, otherMagnets) = it

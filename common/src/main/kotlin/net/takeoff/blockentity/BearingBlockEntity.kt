@@ -17,6 +17,7 @@ import org.joml.Quaterniond
 import org.joml.Vector3d
 import org.valkyrienskies.core.api.ships.ServerShip
 import org.valkyrienskies.core.apigame.constraints.VSAttachmentConstraint
+import org.valkyrienskies.core.apigame.constraints.VSConstraintId
 import org.valkyrienskies.core.apigame.constraints.VSHingeOrientationConstraint
 import org.valkyrienskies.core.impl.hooks.VSEvents
 import org.valkyrienskies.mod.common.dimensionId
@@ -27,15 +28,14 @@ import org.valkyrienskies.mod.common.util.toJOML
 import org.valkyrienskies.mod.common.util.toJOMLD
 import org.valkyrienskies.mod.common.util.toMinecraft
 import org.valkyrienskies.mod.common.world.clipIncludeShips
-import org.valkyrienskies.physics_api.ConstraintId
 import kotlin.math.roundToInt
 
 class BearingBlockEntity(pos: BlockPos, state: BlockState) : BlockEntity(TakeoffBlockEntities.BEARING.get(), pos, state) {
     var isBase = true
         private set
     private var otherPos: BlockPos? = null
-    private var attachConstraintId: ConstraintId? = null
-    private var hingeConstraintId: ConstraintId? = null
+    private var attachConstraintId: VSConstraintId? = null
+    private var hingeConstraintId: VSConstraintId? = null
 
     override fun load(tag: CompoundTag) {
         super.load(tag)

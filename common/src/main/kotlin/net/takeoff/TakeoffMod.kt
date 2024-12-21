@@ -1,6 +1,7 @@
 package net.takeoff
 import net.minecraft.resources.ResourceLocation
 import org.valkyrienskies.core.impl.config.VSConfigClass
+import org.valkyrienskies.mod.common.ValkyrienSkiesMod
 
 
 object TakeoffMod {
@@ -14,7 +15,7 @@ object TakeoffMod {
         //TakeoffScreens.register()
         TakeoffEntities.register()
         TakeoffWeights.register()
-        VSConfigClass.registerConfig("vs_takeoff", TakeoffConfig::class.java)
+        ValkyrienSkiesMod.vsCore.registerConfigLegacy("vs_takeoff", TakeoffConfig::class.java)
     }
 
     @JvmStatic
