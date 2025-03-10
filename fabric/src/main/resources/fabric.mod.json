@@ -41,6 +41,6 @@
   ],
   "depends": {
     "minecraft": ">=1.18.2",
-    "valkyrienskies": ">=${vs2_version}"
+    "valkyrienskies": "*"
   }
 }
